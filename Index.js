@@ -11,19 +11,17 @@ var cors = require("cors");
 app.use(cors())
 
 
-let findSpotController = require("./controller/findSpotController");
-app.use("/findspots", findSpotController);
-
 app.get("/", (req, res) => {
     res.send("This is an Emergency Response Application for Good Samaritans and First Responders");
   });
-
-
-
   
+  let findSpotController = require("./controller/findSpotController");
+  app.use("/findspots", findSpotController);
+  
+  // Error handling middleware (should be placed last)
   app.get("*", (req, res) => {
     res.status(404).json({ error: "Page not found!" });
   });
-
+  
 
 module.exports = app
