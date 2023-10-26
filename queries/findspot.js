@@ -8,8 +8,8 @@ const getOneFindSpot = async (id) =>
 
 
 
-const updateOneFindSpot = async (id, FindSpot) => {
-  const { archived } = FindSpot;
+const updateOneFindSpot = async (id, findspot) => {
+  const { archived } = findspot;
 
   return await db.one(
     "UPDATE findspot SET archived=$1 WHERE id=$2 RETURNING *",
