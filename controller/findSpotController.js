@@ -58,7 +58,7 @@ findspot.put("/:id",  async (req, res) => {
     const { id } = req.params;
     const findspot = req.body;
 
-    const updatedfindspot = await updateOneDream(id, findspot);
+    const updatedfindspot = await updateOneFindSpot(id, findspot);
     res.json(updatedfindspot);
   } catch (error) {
     console.log(error);
@@ -71,7 +71,7 @@ findspot.post("/", async (req, res) => {
   try {
     const findspot = req.body;
 
-    const createdfindspot = await createDream(findspot);
+    const createdfindspot = await createFindSpot(findspot);
     res.json(createdfindspot);
 } catch (error) {
     console.log(error);
