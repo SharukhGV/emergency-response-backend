@@ -3,7 +3,7 @@ CREATE DATABASE find_spot_database;
 
 \c find_spot_database; 
 
-DROP TABLE findspot;
+-- DROP TABLE findspot;
 CREATE TABLE findspot (
   id SERIAL PRIMARY KEY,
   full_name TEXT NOT NULL,

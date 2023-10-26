@@ -1,6 +1,6 @@
 
 const express = require("express");
-const findspot = express.Router();
+const findspots = express.Router();
 const {
     getAllFindSpots,
     getOneFindSpot,
@@ -32,33 +32,33 @@ const {
 //   return res.send('success')
 // }
 
-findspot.get("/", async (req, res) => {
+findspots.get("/", async (req, res) => {
   try {
-    const findspots = await getAllFindSpots();
-    res.json(findspots);
+    const finds = await getAllFindSpots();
+    return res.json(finds);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: "sError getting all find-spots!" });
+    res.status(400).json({ error: "Error getting all find-spots!" });
   }
 });
 
-findspot.get("/:id", async (req, res) => {
+findspots.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const findspot = await getOneFindSpot(id);
-    res.json(findspot);
+    const finds = await getOneFindSpot(id);
+    res.json(finds);
   } catch (error) {
     console.log(error);
     res.status(404).json({ error: "That findspot does not exist!" });
   }
 });
 
-findspot.put("/:id",  async (req, res) => {
+findspots.put("/:id",  async (req, res) => {
   try {
     const { id } = req.params;
-    const findspot = req.body;
+    const finds = req.body;
 
-    const updatedfindspot = await updateOneFindSpot(id, findspot);
+    const updatedfindspot = await updateOneFindSpot(id, finds);
     res.json(updatedfindspot);
   } catch (error) {
     console.log(error);
@@ -67,11 +67,11 @@ findspot.put("/:id",  async (req, res) => {
 });
 
 
-findspot.post("/", async (req, res) => {
+findspots.post("/", async (req, res) => {
   try {
-    const findspot = req.body;
+    const finds = req.body;
 
-    const createdfindspot = await createFindSpot(findspot);
+    const createdfindspot = await createFindSpot(finds);
     res.json(createdfindspot);
 } catch (error) {
     console.log(error);
@@ -81,5 +81,5 @@ findspot.post("/", async (req, res) => {
 }
 });
 
-module.exports = findspot;
+module.exports = findspots;
 
