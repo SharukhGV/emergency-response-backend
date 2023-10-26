@@ -13,5 +13,4 @@ CREATE TABLE findspot (
   emergency TEXT,
   date DATE NOT NULL,
   archived BOOLEAN
-,
 );
