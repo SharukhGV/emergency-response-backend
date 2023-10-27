@@ -7,8 +7,8 @@ CREATE DATABASE find_spot_database;
 CREATE TABLE findspot (
   id SERIAL PRIMARY KEY,
   full_name TEXT NOT NULL,
-  latitude TEXT,
-  longitude TEXT,
+  latitude DECIMAL,
+  longitude DECIMAL,
   description TEXT,
   emergency TEXT,
   date DATE NOT NULL,
