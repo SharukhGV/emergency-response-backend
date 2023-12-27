@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS find_spot_database;
-CREATE DATABASE find_spot_database; 
+DROP DATABASE IF EXISTS hive_heaven_database;
+CREATE DATABASE hive_heaven_database; 
 
-\c find_spot_database; 
+\c hive_heaven_database; 
 
 -- DROP TABLE findspot;
 CREATE TABLE findspot (
@@ -10,7 +10,13 @@ CREATE TABLE findspot (
   latitude DECIMAL,
   longitude DECIMAL,
   description TEXT,
-  emergency TEXT,
+  skybrightness TEXT,
   date DATE NOT NULL,
-  archived BOOLEAN
+  username TEXT,
+  CONSTRAINT fk_findspot_username FOREIGN KEY (username) REFERENCES users(username)
+);
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  username TEXT UNIQUE,
+  hashed_password BLOB,
 );
