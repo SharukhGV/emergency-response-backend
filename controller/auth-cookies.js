@@ -1,9 +1,9 @@
 const { serialize, parse } = require('cookie');
 
 const TOKEN_NAME = 'token'
- const MAX_AGE = 60 * 60 * 8 // 8 hours
+const MAX_AGE = 60 * 60 * 8 // 8 hours
 
- function setTokenCookie(res, token) {
+function setTokenCookie(res, token) {
   const cookie = serialize(TOKEN_NAME, token, {
     maxAge: MAX_AGE,
     expires: new Date(Date.now() + MAX_AGE * 1000),
@@ -16,7 +16,7 @@ const TOKEN_NAME = 'token'
   res.setHeader('Set-Cookie', cookie)
 }
 
- function removeTokenCookie(res) {
+function removeTokenCookie(res) {
   const cookie = serialize(TOKEN_NAME, '', {
     maxAge: -1,
     path: '/',
@@ -25,7 +25,7 @@ const TOKEN_NAME = 'token'
   res.setHeader('Set-Cookie', cookie)
 }
 
- function parseCookies(req) {
+function parseCookies(req) {
   // For API Routes we don't need to parse the cookies.
   if (req.cookies) return req.cookies
 
@@ -34,13 +34,14 @@ const TOKEN_NAME = 'token'
   return parse(cookie || '')
 }
 
- function getTokenCookie(req) {
+function getTokenCookie(req) {
   const cookies = parseCookies(req)
   return cookies[TOKEN_NAME]
 }
 
-module.exports = MAX_AGE
-module.exports = setTokenCookie
-module.exports = removeTokenCookie
-module.exports = parseCookies
-module.exports = getTokenCookie
+module.exports = {
+  setTokenCookie,
+  removeTokenCookie,
+  parseCookies,
+  getTokenCookie
+};

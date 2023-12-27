@@ -17,7 +17,7 @@ const db = require("../db/dbConfig");
 // }
 
 const getAllFindSpots = async () => await db.any("SELECT * FROM findspot");
-const getAllSingleUserFindSpots = async (username) => await db.any("SELECT * FROM findspot WHERE username=$1", username);
+// const getAllSingleUserFindSpots = async (username) => await db.any("SELECT * FROM findspot WHERE username=$1", username);
 
 
 const getOneFindSpot = async (id) =>
@@ -49,23 +49,23 @@ const createFindSpot = async (findspot, username) => {
   );
   }
   
-const newUser = async (userInfo) => {
-  // const postDate = new Date(); // This will Generate the current date on the server
+// const newUser = async (userInfo) => {
+//   // const postDate = new Date(); // This will Generate the current date on the server
 
-  const insertNewUser = await db.one(
-    "INSERT INTO users (username, hashed_password) VALUES($1, $2) RETURNING *",
-    [
-      userInfo.username,
-      userInfo.hashed_password,
-    ]
-  );
+//   const insertNewUser = await db.one(
+//     "INSERT INTO users (username, hashed_password) VALUES($1, $2) RETURNING *",
+//     [
+//       userInfo.username,
+//       userInfo.hashed_password,
+//     ]
+//   );
 
-  return insertNewUser;
-}
-const getOneUser = async (user) => {
-  const result = await db.one("SELECT * FROM users WHERE username=$1 AND hashed_password=$2", user);
-  return result;
-};
+//   return insertNewUser;
+// }
+// const getOneUser = async (user) => {
+//   const result = await db.one("SELECT * FROM users WHERE username=$1 AND hashed_password=$2", user);
+//   return result;
+// };
 
 
 module.exports = {
@@ -73,7 +73,5 @@ module.exports = {
   getOneFindSpot,
   updateOneFindSpot,
   createFindSpot,
-  newUser,
-  getOneUser,
-  getAllSingleUserFindSpots
+ 
 }

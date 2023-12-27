@@ -17,6 +17,7 @@ CREATE TABLE findspot (
 );
 CREATE TABLE users (
   id INTEGER PRIMARY KEY,
+  createdAt date,
   username TEXT UNIQUE,
   hashed_password BLOB,
 );
