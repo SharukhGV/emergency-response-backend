@@ -2,6 +2,7 @@
 
 const express = require("express");
 const newusers = express.Router();
+const { v4: uuidv4 } = require('uuid');
 const {
    
     newUser,
@@ -50,24 +51,74 @@ function validatePassword(user, inputPassword) {
 
 
 
+// const crypto = require('crypto');
 
-function createUser({ username, password }) {
-  // Here you should create the user and save the salt and hashed password (some dbs may have
-  // authentication methods that will do it for you so you don't have to worry about it):
-  const hash = crypto.randomBytes(16).toString('hex').pbkdf2Sync(password, hash, 1000, 64, 'sha512')
-    .toString('hex')
-    
-  const user = {
-    id: uuidv4(),
-    createdAt: Date.now(),
-    username,
-    hash,
-    // salt,
-  };
+// function createUser({ username, password }) {
+//   // Generate a random salt
+//   const salt = crypto.randomBytes(16).toString('hex');
 
-  return {username:user.username, hashed_password:user.hash}
+//   // Hash the password using PBKDF2 with the generated salt
+//   const hashedPassword = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 
+//   const user = {
+//     id: uuidv4(),
+//     createdAt: Date.now(),
+//     username: username,
+//     hashed_Password: hashedPassword, // Store the hashed password
+//     salt, // Store the salt
+//   };
+
+//   // Return user object with username, hashed password, and salt
+//   return user;
+// }
+
+
+const crypto = require('crypto');
+
+// Function to hash and salt the password
+function hashPassword(password, salt) {
+  const hashedPassword = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  return hashedPassword;
 }
+
+// Function to create a new user (with password hashing)
+const createUser = async (username, password ) => {
+  try {
+    // Generate a random salt
+    const salt = crypto.randomBytes(16).toString('hex');
+
+    // Hash the provided password using the generated salt
+    const hashedPassword = hashPassword(password, salt);
+
+    // Save 'username', 'hashedPassword', and 'salt' in the database
+    // Perform the database insertion operation here using the hashedPassword and salt
+
+    // For demonstration purposes, returning the user object with hashedPassword and salt
+    const user = {
+        id: uuidv4(),
+        username:username,
+        hashed_password:hashedPassword,
+        salt:salt,
+    };
+
+    return user;
+  } catch (error) {
+    // Handle errors
+    throw new Error("Error creating a new user: " + error.message);
+  }
+};
+
+// Usage example:
+// const newUser = { username: 'exampleUser', password: 'examplePassword' };
+// createUser(newUser)
+//   .then(user => {
+//     console.log("New user created:", user);
+//     // Perform database insertion here using user object's data (hashedPassword, salt, etc.)
+//   })
+//   .catch(error => {
+//     console.error("Error:", error);
+//   });
+
 const authMiddleware = (req, res, next) => {
   const token = getTokenCookie(req); // Retrieve token from cookie
 
@@ -99,26 +150,23 @@ newusers.get("/:user", validatePassword, authMiddleware, async (req, res) => {
 
 // ... other routes
 
-// Example login route (assuming a POST request)
-newusers.post("/", createUser, async (req, res) => {
-  try {
-    // Perform authentication logic here
-    const user = req.body;
-
-    const createdUser = await newUser(user);
-    res.json(createdUser);
-    // If authentication succeeds:
-    const sessionData = { /* user data */ };
-    await setLoginSession(res, sessionData);
-    res.json({ message: "Login successful!" });
-  } catch (error) {
-    console.log(error);
-    res.status(401).json({ error: "Invalid credentials" });
-  }
-});
-
-
-
+// Route handler for creating a new user
+newusers.post("/", async (req, res) => {
+    try {
+      const user = req.body; // Assuming the request body contains username and password
+      let encryptedUser = createUser(user.username, user.hashed_password)
+      // Call the `newUser` function to insert the new user into the database
+     await newUser(encryptedUser);
+  
+      // If user creation is successful, set session data and send a success message
+    //   const sessionData = { /* user data */ };
+    //   await setLoginSession(res, sessionData);
+    return  res.json({ message: "User created and logged in successfully!", encryptedUser });
+    } catch (error) {
+      console.log(error);
+      res.status(401).json({ error: "Invalid credentials or unable to create user" });
+    }
+  });
 newusers.get("/userdata", async (req, res) => {
     try {
       const finds = await getAllSingleUserFindSpots();
