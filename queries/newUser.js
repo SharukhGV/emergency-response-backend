@@ -1,14 +1,13 @@
 
 const db = require("../db/dbConfig");
-const newUser = async (userInfo) => {
+const newuser = async (userInfo) => {
     try {
       const insertNewUser = await db.one(
-        "INSERT INTO users (createdAt, username, hashed_password, salt) VALUES($1, $2, $3, $4) RETURNING *",
+        "INSERT INTO users (createdAt, username, hashed_password) VALUES($1, $2, $3) RETURNING *",
         [
           Date.now(),
           userInfo.username,
-          userInfo.hashedpassword,
-          userInfo.salt
+          userInfo.hashed_password,
         ]
       );
     
@@ -27,12 +26,12 @@ const getAllSingleUser = async (username) => {
     return userz;
   } catch (error) {
     // Handle errors for fetching all find spots for a user
-    throw new Error("Error fetching find spots for a user: " + error.message);
+    throw new Error("Error fetching information for a user: " + error.message);
   }
 };
 
 module.exports = {
-  newUser,
+    newuser,
   getAllSingleUser
 };
 
