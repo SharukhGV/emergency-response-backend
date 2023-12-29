@@ -2,12 +2,11 @@
 
 const express = require("express");
 const newusers = express.Router();
-const { v4: uuidv4 } = require('uuid');
+// const { v4: uuidv4 } = require('uuid');
 const {
    
     newUser,
-    getOneUser,
-    getAllSingleUserFindSpots
+    getAllSingleUser,
 } = require("../queries/newUser");
 
 // const {
@@ -95,7 +94,6 @@ const createUser = async (username, password ) => {
 
     // For demonstration purposes, returning the user object with hashedPassword and salt
     const user = {
-        id: uuidv4(),
         username:username,
         hashed_password:hashedPassword,
         salt:salt,
@@ -136,17 +134,30 @@ const authMiddleware = (req, res, next) => {
     res.status(401).json({ error: "Unauthorized" });
   }
 };
-
-newusers.get("/:user", validatePassword, authMiddleware, async (req, res) => {
-  try {
-    const { user } = req.params;
-    const getUser = await getOneUser(user);
-    res.json(getUser);
-  } catch (error) {
-    console.log(error);
-    res.status(404).json({ error: "That User does not exist!" });
-  }
-});
+newusers.get("/:username", validatePassword, authMiddleware, async (req, res) => {
+    try {
+      // Assuming username is retrieved from the route parameter
+      const { username } = req.params;
+  
+      // Use the username to fetch user information from the database
+      const user = await getAllSingleUser(username);
+  
+      // Assuming user contains the retrieved user information
+      const userInfo = {
+        userId: user.userId,
+        username: user.username,
+        // Other user information...
+      };
+  
+      // Send the user information as a JSON response
+      return res.json(userInfo);
+  
+    } catch (error) {
+      console.log(error);
+      res.status(404).json({ error: "That User does not exist!" });
+    }
+  });
+  
 
 // ... other routes
 
@@ -167,15 +178,16 @@ newusers.post("/", async (req, res) => {
       res.status(401).json({ error: "Invalid credentials or unable to create user" });
     }
   });
-newusers.get("/userdata", async (req, res) => {
-    try {
-      const finds = await getAllSingleUserFindSpots();
-      return res.json(finds);
-    } catch (error) {
-      console.log(error);
-      res.status(400).json({ error: "Error getting all find-spots!" });
-    }
-  });
+// newusers.get("/userdata", async (req, res) => {
+//     try {
+//       const finds = await getAllSingleUser();
+//       return res.json(finds);
+//     } catch (error) {
+//       console.log(error);
+//       res.status(400).json({ error: "Error getting all find-spots!" });
+//     }
+//   });
+
 
 
 module.exports = newusers

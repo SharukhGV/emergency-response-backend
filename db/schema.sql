@@ -19,7 +19,7 @@ CREATE TABLE findspot (
 
 DROP TABLE users;
 CREATE TABLE users (
-  id INTEGER PRIMARY KEY,
+  id serial PRIMARY KEY,
   createdAt BIGINT,
   username TEXT UNIQUE,
   hashed_password bytea,
