@@ -15,15 +15,18 @@ var cors = require("cors");
 
 app.use(cors())
 
-// let findSpotController = require("./controller/findSpotController");//uncomment this
 let newUserController = require("./controller/newUserController");
+
+let findSpotController = require("./controller/findSpotController");//uncomment this
 
 app.get("/", (req, res) => {
     res.send("This is an Night Sky Finder Application server");
   });
 
-// app.use("/findspots", findSpotController); // Use findSpotController for /findspots endpoint // uncomment this
+
 app.use("/newusers", newUserController); // Use newUserController for /newusers endpoint
+
+app.use("/findspots", findSpotController); // Use findSpotController for /findspots endpoint // uncomment this
 
 // Error handling middleware (should be placed last)
 app.get("*", (req, res) => {

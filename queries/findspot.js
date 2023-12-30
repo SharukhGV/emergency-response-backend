@@ -1,21 +1,6 @@
 const db = require("../db/dbConfig");
 // var session = require('express-session');
 
-
-// import Iron from '@hapi/iron'
-// import { MAX_AGE, setTokenCookie, getTokenCookie } from './auth-cookies'
-
-// const TOKEN_SECRET = process.env.TOKEN_SECRET
-
-// export async function setLoginSession(res, session) {
-//   const createdAt = Date.now()
-//   // Create a session object with a max age that we can validate later
-//   const obj = { ...session, createdAt, maxAge: MAX_AGE }
-//   const token = await Iron.seal(obj, TOKEN_SECRET, Iron.defaults)
-
-//   setTokenCookie(res, token)
-// }
-
 const getAllFindSpots = async () => await db.any("SELECT * FROM findspot");
 // const getAllSingleUserFindSpots = async (username) => await db.any("SELECT * FROM findspot WHERE username=$1", username);
 

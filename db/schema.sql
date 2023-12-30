@@ -3,7 +3,7 @@ CREATE DATABASE hive_heaven_database;
 
 \c hive_heaven_database; 
 
-DROP TABLE findspot;
+-- DROP TABLE findspot;
 CREATE TABLE findspot (
   id SERIAL PRIMARY KEY,
   full_name TEXT NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE findspot (
 );
 -- DROP TABLE findspot;
 
-DROP TABLE users;
+-- DROP TABLE users;
 CREATE TABLE users (
   id serial PRIMARY KEY,
   createdAt BIGINT,
