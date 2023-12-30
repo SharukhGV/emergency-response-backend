@@ -24,13 +24,13 @@ const { setTokenCookie, getTokenCookie } = require('./auth-cookies');
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET
 
- async function setLoginSession(res, session) {
-  const createdAt = Date.now()
-  // Create a session object with a max age that we can validate later
-  const obj = { ...session, createdAt, maxAge: MAX_AGE }
-  const token = await Iron.seal(obj, TOKEN_SECRET, Iron.defaults)
+async function setLoginSession(res, session) {
+    const createdAt = Date.now()
+    // Create a session object with a max age that we can validate later
+    const obj = { ...session, createdAt, maxAge: MAX_AGE }
+    const token = await Iron.seal(obj, TOKEN_SECRET, Iron.defaults)
 
-  setTokenCookie(res, token)
+    setTokenCookie(res, token)
 }
 
 // function validatePassword(req, res) {
@@ -40,7 +40,7 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET
 //       .pbkdf2Sync(inputPassword, username.salt, 1000, 64, 'sha512')
 //       .toString('hex');
 //     const passwordsMatch = user.hash === hashed_password;
-  
+
 //     if (passwordsMatch) {
 //       // Passwords match, proceed to the next middleware or route handler
 //       next();
@@ -49,38 +49,123 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET
 //       res.status(401).send('Authentication failed');
 //     }
 //   }
+
+// async function validatePassword(req, res, next) {
+//     try {
+//         const { username, hashed_password } = req.body;
+
+//         // Sanitize and validate input (example)
+//         // ...
+
+//         // Retrieve user from database securely using prepared statement
+//         const user = await db.query(
+//             "SELECT * FROM users WHERE username = $1",
+//             [username]
+//         );
+
+
+//         if (user.rows.length === 0) {
+//             return res.status(400).json({ error: "Username does not exist" });
+//         }
+//         const isValidPassword = await bcrypt.compare(hashed_password, user.rows[0].hashed_password);
+
+
+
+//         if (isValidPassword && Array.isArray(user.rows) || user.rows.length === 1) {
+//             //     return res.status(400).json({ error: "Username already exists" });
+//             //   }
+
+
+//             //   if (isValidPassword) {
+//             next(); // Proceed to next middleware/route
+//         } else {
+//             res.status(401).send('Authentication failed');
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send('Internal server error');
+//     }
+// }
+
+// async function validatePassword(req, res, next) {
+//     try {
+//     //   const { username, hashed_password } = req.body;
+//   const username = req.params.person
+//   const hashed_password=req.body.hashed_password
+//       // Sanitize and validate input (if required)
   
+//       // Retrieve user from database securely using prepared statement
+//       const user = getAllSingleUser(username);  
+    
+
+// // Assuming hashedPassword is the hashed password retrieved from the database
+// const hashedPassword = user.hashed_password; // Replace with your hashed password
+
+// // Plain text password input by the user
+// const userEnteredPassword = hashed_password; // Replace with user's entered password
+
+// // Compare the user-entered password with the hashed password from the database
+// bcrypt.compare(userEnteredPassword, hashedPassword, (err, result) => {
+//   if (err) {
+//     // Handle error
+//     console.error(err);
+//     return;
+//   }
+  
+//   if (result) {
+//     // Passwords match
+//     console.log('Password is valid');
+//     next()
+//     // Proceed with further actions (e.g., allow access)
+//   } else {
+//     // Passwords do not match
+//     console.log('Invalid password');
+//     // Handle invalid password scenario (e.g., show error message)
+//   }
+// });
 async function validatePassword(req, res, next) {
     try {
-      const { username, hashed_password } = req.body;
+      const username = req.params.person;
+      const userEnteredPassword = req.body.hashed_password;
   
-      // Sanitize and validate input (example)
-      // ...
+      // Sanitize and validate input (if required)
   
-      // Retrieve user from database securely using prepared statement
-      const user = await db.query(
-        "SELECT * FROM users WHERE username = $1",
-        [username]
-      );
+      const user = await getAllSingleUser(username); // Await the result
   
-      if (!user || !user.rows.length) {
-        return res.status(401).send('Invalid username');
+      if (!user || !user.hashed_password) {
+        return res.status(401).json({ error: 'Invalid username' });
       }
   
-      const isValidPassword = await bcrypt.compare(hashed_password, user.rows[0].hashed_password);
+      const hashedPassword = user.hashed_password;
   
-      if (isValidPassword) {
-        next(); // Proceed to next middleware/route
+      const result = await bcrypt.compare(hashedPassword, userEnteredPassword); // Await comparison
+  
+      if (result) {
+        console.log('Password is valid');
+        next();
       } else {
-        res.status(401).send('Authentication failed');
+        console.log('Invalid password');
+        // Handle invalid password scenario
+        res.status(401).json({ error: 'Invalid password' });
       }
     } catch (error) {
       console.error(error);
-      res.status(500).send('Internal server error');
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
-
-
+  
+  
+      // Authentication successful, add user information to request object if needed
+    //   req.authenticatedUser = user.rows[0]; // Example: Storing user data in request object
+    // }
+    // else{return res.status(400).json({ error: "Invalidness All Around" });}
+    //   next(); // Proceed to next middleware/route
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).send('Internal server error');
+//     }
+//   }
+  
 
 // const crypto = require('crypto');
 
@@ -108,34 +193,34 @@ const crypto = require('crypto');
 
 // Function to hash and salt the password
 function hashPassword(password, salt) {
-  const hashedPassword = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-  return hashedPassword;
+    const hashedPassword = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+    return hashedPassword;
 }
 
 // Function to create a new user (with password hashing)
-const createUser = async (username, password ) => {
-  try {
-    // Generate a random salt
-    const salt = crypto.randomBytes(16).toString('hex');
+const createUser = async (username, password) => {
+    try {
+        // Generate a random salt
+        const salt = crypto.randomBytes(16).toString('hex');
 
-    // Hash the provided password using the generated salt
-    const hashedPassword = hashPassword(password, salt);
+        // Hash the provided password using the generated salt
+        const hashedPassword = hashPassword(password, salt);
 
-    // Save 'username', 'hashedPassword', and 'salt' in the database
-    // Perform the database insertion operation here using the hashedPassword and salt
+        // Save 'username', 'hashedPassword', and 'salt' in the database
+        // Perform the database insertion operation here using the hashedPassword and salt
 
-    // For demonstration purposes, returning the user object with hashedPassword and salt
-    const user = {
-        username:username,
-        hashed_password:hashedPassword,
-        salt:salt,
-    };
+        // For demonstration purposes, returning the user object with hashedPassword and salt
+        const user = {
+            username: username,
+            hashed_password: hashedPassword,
+            salt: salt,
+        };
 
-    return user;
-  } catch (error) {
-    // Handle errors
-    throw new Error("Error creating a new user: " + error.message);
-  }
+        return user;
+    } catch (error) {
+        // Handle errors
+        throw new Error("Error creating a new user: " + error.message);
+    }
 };
 
 // Usage example:
@@ -150,54 +235,54 @@ const createUser = async (username, password ) => {
 //   });
 
 const authMiddleware = (req, res) => {
-  const token = getTokenCookie(req); // Retrieve token from cookie
+    const token = getTokenCookie(req); // Retrieve token from cookie
 
-  if (token) {
-    try {
-      const sessionData = Iron.unseal(token, TOKEN_SECRET, Iron.defaults); // Decrypt and verify token
-      req.session = sessionData; // Attach session data to request object
-      next(); // Proceed to next middleware or route handler
-    } catch (error) {
-      // Handle invalid or expired token
-      res.status(401).json({ error: "Unauthorized" });
+    if (token) {
+        try {
+            const sessionData = Iron.unseal(token, TOKEN_SECRET, Iron.defaults); // Decrypt and verify token
+            req.session = sessionData; // Attach session data to request object
+            next(); // Proceed to next middleware or route handler
+        } catch (error) {
+            // Handle invalid or expired token
+            res.status(401).json({ error: "Unauthorized" });
+        }
+    } else {
+        // Handle missing token
+        res.status(401).json({ error: "Unauthorized" });
     }
-  } else {
-    // Handle missing token
-    res.status(401).json({ error: "Unauthorized" });
-  }
 };
-newusers.post("/:person", async (req, res) => {
+newusers.post("/:person", validatePassword, authMiddleware, async (req, res) => {
     try {
-      // Assuming username is retrieved from the route parameter
-      const { username, hashed_password } = req.body;
-    //   (username,hashed_password)
-      const {person} = req.params
-      // Use the username to fetch user information from the database
-      const user = await getAllSingleUser(person);
-    //   const inputPassword = req.body.password;
-  
-      // Example: Passing user and inputPassword to the validatePassword middleware
-      validatePassword(person, hashed_password);
-  
-      // Example: Using authMiddleware if needed
-      authMiddleware(req, res);
-  
-      // Assuming user contains the retrieved user information
-      const userInfo = {
-        userId: user.id,
-        username: user.username,
-        // Other user information...
-      };
-  
-      // Send the user information as a JSON response
-      return res.json(userInfo);
-  
+        // Assuming username is retrieved from the route parameter
+        const { username, hashed_password } = req.body;
+        //   (username,hashed_password)
+        const { person } = req.params
+        // Use the username to fetch user information from the database
+        const user = await getAllSingleUser(person);
+        //   const inputPassword = req.body.password;
+
+        //   // Example: Passing user and inputPassword to the validatePassword middleware
+        //   validatePassword();
+
+        //   // Example: Using authMiddleware if needed
+        //   authMiddleware();
+
+        // Assuming user contains the retrieved user information
+        const userInfo = {
+            userId: user.id,
+            username: user.username,
+            // Other user information...
+        };
+
+        // Send the user information as a JSON response
+        return res.json(userInfo);
+
     } catch (error) {
-      console.log(error);
-      res.status(404).json({ error: "That User does not exist!" });
+        console.log(error);
+        res.status(404).json({ error: "That User does not exist!" });
     }
-  });
-  
+});
+
 // newusers.get("/userdata", async (req, res) => {
 //     try {
 //       const finds = await getAllSingleUser();
@@ -212,7 +297,7 @@ newusers.post("/:person", async (req, res) => {
 // Route handler for creating a new user
 
 // newusers.post("/", async (req, res) => {
-    
+
 //   try { 
 //     const user = req.body;
 //     // Check if a similar user already exists in the database
@@ -226,7 +311,7 @@ newusers.post("/:person", async (req, res) => {
 //       let encryptedUser = createUser(user.username, user.hashed_password)
 //       // Call the `newUser` function to insert the new user into the database
 // await newUser(encryptedUser);
-  
+
 //       // If user creation is successful, set session data and send a success message
 //     //   const sessionData = userDATA;
 //     //   await setLoginSession(res, sessionData);
@@ -240,42 +325,42 @@ newusers.post("/:person", async (req, res) => {
 
 newusers.post("/", async (req, res) => {
     try {
-    //   const { username, hashed_password } = req.body; // Extract specific fields
-  const password = req.body.hashed_password
-  const username = req.body.username
-      // Validate input (e.g., check for empty fields, password strength)
-      if (!username || !password ) {
-        return res.status(400).json({ error: "Invalid user data" });
-      }
-  
-      // Check for exact username match using a prepared statement
-      const existingUser = await db.query(
-        "SELECT * FROM users WHERE username = $1",
-        [username]
-      );
-  // Check if existingUser.rows is defined and is an array
-if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
-    return res.status(400).json({ error: "Username already exists" });
-  }
-  
-  
-      // Hash password securely using bcrypt
-      const hashedPassword = await bcrypt.hash(password, 10);
-  
-      // Create the new user object
-      const newUser7 = { username:username, hashed_password:hashedPassword };
-  
-      // Insert the user into the database
-      newuser(newUser7)  
-      // Set session data (if applicable)
-      // ...
-  
-      return res.json({ message: "User created successfully!" });
+        //   const { username, hashed_password } = req.body; // Extract specific fields
+        const password = req.body.hashed_password
+        const username = req.body.username
+        // Validate input (e.g., check for empty fields, password strength)
+        if (!username || !password) {
+            return res.status(400).json({ error: "Invalid user data" });
+        }
+
+        // Check for exact username match using a prepared statement
+        const existingUser = await db.query(
+            "SELECT * FROM users WHERE username = $1",
+            [username]
+        );
+        // Check if existingUser.rows is defined and is an array
+        if (Array.isArray(existingUser.rows) && existingUser.rows.length >0) {
+            return res.status(400).json({ error: "Username already exists" });
+        }
+
+
+        // Hash password securely using bcrypt
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create the new user object
+        const newUser7 = { username: username, hashed_password: hashedPassword };
+
+        // Insert the user into the database
+        newuser(newUser7)
+        // Set session data (if applicable)
+        // ...
+
+        return res.json({ message: "User created successfully!" });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Failed to create user" });
+        console.error(error);
+        res.status(500).json({ error: "Failed to create user" });
     }
-  });
+});
 
 
 
@@ -293,17 +378,17 @@ if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
 //     }
 //   });
 
-newusers.get('/logout', (req, res) => {
+newusers.get('/:person/logout', (req, res) => {
     req.session.destroy((err) => {
-      if (err) {
-        // Handle error
-        res.status(500).json({ error: 'Error logging out' });
-      } else {
-        // Session destroyed, user logged out
-        // res.redirect('/login'); // Redirect to login page or any desired page
-      }
+        if (err) {
+            // Handle error
+            res.status(500).json({ error: 'Error logging out' });
+        } else {
+            // Session destroyed, user logged out
+            res.redirect('/login'); // Redirect to login page or any desired page
+        }
     });
-  });
-  
+});
+
 
 module.exports = newusers
