@@ -22,7 +22,7 @@ const newuser = async (userInfo) => {
 
 const getAllSingleUser = async (username) => {
   try {
-    const userz = await db.any("SELECT * FROM users WHERE username=$1", username);
+    const userz = await db.any("SELECT id, username, hashed_password FROM users WHERE username=$1", username);
     return userz;
   } catch (error) {
     // Handle errors for fetching all find spots for a user

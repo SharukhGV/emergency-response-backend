@@ -33,16 +33,16 @@ const {
 
 newusers.post("/login", async (req, res) => {
     try {
-        const password = req.body.hashed_password
+        const hashed_password = req.body.hashed_password
         const username = req.body.username  
       const user = await getAllSingleUser(username);
   
-      const isPasswordValid = bcrypt.compare(user.hashed_password, hashed_password );
+      const isPasswordValid = bcrypt.compare(user[0].hashed_password, hashed_password );
   
       if (isPasswordValid) {
         const userInfo = {
-          userId: user.id,
-          username: user.username,
+          userId: user[0].id,
+          username: user[0].username,
         };
   
         if (!req.session) {
