@@ -33,7 +33,7 @@ const createFindSpot = async (findspot) => {
 
     // Insert values into the 'findspot' table
     const newFindSpot = await db.one(
-      "INSERT INTO findspot (full_name, latitude, longitude, description, skybrightness, archived, date, username) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+      "INSERT INTO findspot (full_name, latitude, longitude, description, skybrightness, date, username) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
       [
         findspot.full_name,
         findspot.latitude,
