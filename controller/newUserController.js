@@ -9,21 +9,29 @@ const cookieParser = require('cookie-parser');
 const app = express();
 
 // Use cookie parser and session middleware
+
 app.use(cookieParser());
+
 app.use(session({
-  secret: process.env.TOKEN_SECRET, // Replace with a secret key for session encryption
+  // Options for session management
+  secret: process.env.TOKEN_SECRET, // Replace with a strong secret key
   resave: false,
-  saveUninitialized: false
-  // Additional configuration options as needed
+  saveUninitialized: false,
+  cookie: { secure: true }, // Consider setting secure for HTTPS
 }));
 
-// Your other middleware and route handlers...
+
+// // Your other middleware and route handlers...
+// cloudinary.v2.uploader.upload("https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg",
+//   { public_id: "olympic_flag" }, 
+//   function(error, result) {console.log(result); });
+
 
 // jwtMiddleware.js
 const jwt = require('jsonwebtoken');
 // const jwtMiddleware = require('./jwtMiddleware');
 function generateAccessToken(user) {
-  return jwt.sign({ id: user.id, username: user.username }, process.env.TOKEN_SECRET, { expiresIn: '15m' }); // Adjust expiration as needed
+    return jwt.sign({ id: user.id, username: user.username }, process.env.TOKEN_SECRET, { expiresIn: '15m' }); // Adjust expiration as needed
 }
 
 const {
@@ -33,28 +41,28 @@ const {
 
 newusers.post("/login", async (req, res) => {
     try {
-        const hashed_password = req.body.hashed_password
-        const username = req.body.username  
+      const hashed_password = req.body.hashed_password;
+      const username = req.body.username;
+
+      // Validate inputs (example)
+      if (!username || !hashed_password) {
+        return res.status(400).json({ error: 'Invalid username or password' });
+      }
+  
       const user = await getAllSingleUser(username);
   
-      const isPasswordValid = bcrypt.compare(user[0].hashed_password, hashed_password );
+      const isMatch = await bcrypt.compare(`${req.body.hashed_password}`, `${user[0].hashed_password}`);
   
-      if (isPasswordValid) {
+      if (isMatch) {
         const userInfo = {
           userId: user[0].id,
           username: user[0].username,
         };
   
-        if (!req.session) {
-          req.session = {};
-        }
+        // req.session.user = userInfo;
   
-        req.session.user = userInfo;
-  
-        // Generate JWT access token
         const accessToken = generateAccessToken(userInfo);
   
-        // Send the access token in the response
         return res.json({ accessToken });
       } else {
         return res.status(401).json({ error: 'Invalid username or password' });
@@ -83,7 +91,7 @@ newusers.post("/", async (req, res) => {
             [username]
         );
         // Check if existingUser.rows is defined and is an array
-        if (Array.isArray(existingUser.rows) && existingUser.rows.length >0) {
+        if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
             return res.status(400).json({ error: "Username already exists" });
         }
 
@@ -113,18 +121,18 @@ newusers.post('/logout', (req, res) => {
     // Perform logout actions (e.g., blacklist the token)
     res.clearCookie('access_token'); // Clear the access token cookie
     res.sendStatus(204); // No Content
-  });
+});
 
 // Example route to retrieve user data based on the session
 newusers.get('/profile', (req, res) => {
     if (req.session.user) {
-      const userData = req.session.user;
-      res.send(`User ID: ${userData.id}, Username: ${userData.username}`);
+        const userData = req.session.user;
+        res.send(`User ID: ${userData.id}, Username: ${userData.username}`);
     } else {
-      res.send('Not logged in');
+        res.send('Not logged in');
     }
-  });
-  
+});
+
 
 
 module.exports = newusers

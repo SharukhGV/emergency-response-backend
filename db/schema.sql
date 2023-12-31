@@ -12,6 +12,7 @@ CREATE TABLE findspot (
   description TEXT,
   skybrightness TEXT,
   date DATE NOT NULL,
+  image_url TEXT,
   username TEXT,
   CONSTRAINT fk_findspot_username FOREIGN KEY (username) REFERENCES users(username)
 );
