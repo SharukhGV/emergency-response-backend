@@ -53,13 +53,14 @@ findspots.get("/:id", async (req, res) => {
   }
 });
 
-findspots.put("/:id",  async (req, res) => {
+findspots.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const finds = req.body;
 
-    const updatedfindspot = await updateOneFindSpot(id, finds);
-    res.json(updatedfindspot);
+    // Call the update function and handle the response
+    const updatedFindspot = await updateOneFindSpot(id, finds);
+    res.json(updatedFindspot);
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: "Cannot Update Archive Status of specified findspot" });

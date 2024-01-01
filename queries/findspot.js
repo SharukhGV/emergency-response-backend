@@ -12,14 +12,27 @@ const deleteOne = async (username, id) => {
 const getOneFindSpot = async (id) =>
   await db.one("SELECT * FROM findspot WHERE id=$1", id);
 
-const updateOneFindSpot = async (id, findspot) => {
-  const { archived } = findspot;
-
-  return await db.one(
-    "UPDATE findspot SET archived=$1 WHERE id=$2 RETURNING *",
-    [archived, id]
-  );
-};
+  const updateOneFindSpot = async (id, findspot) => {
+    try {
+      const result = await db.oneOrNone(
+        "UPDATE findspot SET full_name=$1, latitude=$2, longitude=$3, description=$4, skybrightness=$5, date=$6, username=$7 WHERE id=$8 RETURNING *",
+        [
+          findspot.full_name,
+          findspot.latitude,
+          findspot.longitude,
+          findspot.description,
+          findspot.skybrightness,
+          findspot.date,
+          findspot.username,
+          id // id from the function parameter
+        ]
+      );
+      return result; // Return the updated record if successful
+    } catch (error) {
+      throw new Error(`Error updating findspot: ${error.message}`);
+    }
+  };
+  
 const createFindSpot = async (findspot) => {
   try {
     // Checks if the username exists in the 'findspot' table
