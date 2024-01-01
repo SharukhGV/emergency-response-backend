@@ -7,6 +7,7 @@ const {
     getOneFindSpot,
     updateOneFindSpot,
     createFindSpot,
+    deleteOne
 } = require("../queries/findspot");
 
 
@@ -32,6 +33,14 @@ findspots.get("/", async (req, res) => {
 // });
 
 // getAllSingleUserFindSpots
+
+// deleteOne
+
+// findspots.delete("/", async (req, res) => {
+
+
+
+// })
 
 findspots.get("/:id", async (req, res) => {
   try {

@@ -4,6 +4,10 @@ const db = require("../db/dbConfig");
 const getAllFindSpots = async () => await db.any("SELECT * FROM findspot");
 // const getAllSingleUserFindSpots = async (username) => await db.any("SELECT * FROM findspot WHERE username=$1", username);
 
+const deleteOne = async (username, id) => {
+  await db.one("DELETE FROM findspot WHERE username=$1 AND id=$2", username, id);
+};
+
 
 const getOneFindSpot = async (id) =>
   await db.one("SELECT * FROM findspot WHERE id=$1", id);
@@ -75,5 +79,5 @@ module.exports = {
   getOneFindSpot,
   updateOneFindSpot,
   createFindSpot,
-
+  deleteOne
 }
