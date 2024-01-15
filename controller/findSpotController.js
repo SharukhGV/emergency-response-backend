@@ -36,11 +36,17 @@ findspots.get("/", async (req, res) => {
 
 // deleteOne
 
-// findspots.delete("/", async (req, res) => {
 
-
-
-// })
+findspots.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  // const { username } = req.body;
+  try {
+    await deleteOne(id);
+    res.status(200).json({ message: 'Findspot deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 findspots.get("/:id", async (req, res) => {
   try {

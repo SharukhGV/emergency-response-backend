@@ -7,8 +7,8 @@ CREATE DATABASE hive_heaven_database;
 CREATE TABLE findspot (
   id SERIAL PRIMARY KEY,
   full_name TEXT NOT NULL,
-  latitude DECIMAL(10, 6), -- Adjust precision and scale as needed
-  longitude DECIMAL(10, 6), -- Adjust precision and scale as needed
+  latitude DECIMAL(10, 6),
+  longitude DECIMAL(10, 6), 
   description TEXT,
   skybrightness TEXT,
   date DATE NOT NULL,

@@ -2,12 +2,25 @@ const db = require("../db/dbConfig");
 // var session = require('express-session');
 
 const getAllFindSpots = async () => await db.any("SELECT * FROM findspot");
-// const getAllSingleUserFindSpots = async (username) => await db.any("SELECT * FROM findspot WHERE username=$1", username);
 
-const deleteOne = async (username, id) => {
-  await db.one("DELETE FROM findspot WHERE username=$1 AND id=$2", username, id);
+
+
+const deleteOne = async (id) => {
+  try {
+    await db.none("DELETE FROM findspot WHERE id=$1", [id]);
+  } catch (error) {
+    throw new Error(`Error deleting findspot: ${error.message}`);
+  }
 };
 
+
+// const deleteOne = async (username, id) => {
+//   try {
+//     await db.none("DELETE FROM findspot WHERE id=$1", [username, id]);
+//   } catch (error) {
+//     throw new Error(`Error deleting findspot: ${error.message}`);
+//   }
+// };
 
 const getOneFindSpot = async (id) =>
   await db.one("SELECT * FROM findspot WHERE id=$1", id);
