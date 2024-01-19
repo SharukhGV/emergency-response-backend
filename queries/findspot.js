@@ -28,7 +28,7 @@ const getOneFindSpot = async (id) =>
   const updateOneFindSpot = async (id, findspot) => {
     try {
       const result = await db.oneOrNone(
-        "UPDATE findspot SET full_name=$1, latitude=$2, longitude=$3, description=$4, skybrightness=$5, date=$6, username=$7 WHERE id=$8 RETURNING *",
+        "UPDATE findspot SET full_name=$1, latitude=$2, longitude=$3, description=$4, skybrightness=$5, date=$6, username=$7, image_url=$8 WHERE id=$9 RETURNING *",
         [
           findspot.full_name,
           findspot.latitude,
@@ -37,6 +37,7 @@ const getOneFindSpot = async (id) =>
           findspot.skybrightness,
           findspot.date,
           findspot.username,
+          findspot.image_url,
           id // id from the function parameter
         ]
       );
@@ -63,7 +64,7 @@ const createFindSpot = async (findspot) => {
 
     // Insert values into the 'findspot' table
     const newFindSpot = await db.one(
-      "INSERT INTO findspot (full_name, latitude, longitude, description, skybrightness, date, username) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      "INSERT INTO findspot (full_name, latitude, longitude, description, skybrightness, date, username, image_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
       [
         findspot.full_name,
         findspot.latitude,
@@ -71,7 +72,8 @@ const createFindSpot = async (findspot) => {
         findspot.description,
         findspot.skybrightness,
         postDate,
-        findspot.username
+        findspot.username,
+        findspot.image_url
       ]
     );
 
