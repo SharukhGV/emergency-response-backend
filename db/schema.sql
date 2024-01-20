@@ -26,3 +26,14 @@ CREATE TABLE users (
   hashed_password bytea,
   salt INTEGER
 );
+
+
+CREATE TABLE comments (
+  id serial PRIMARY KEY,
+  description TEXT,
+  date DATE NOT NULL,
+  my_username TEXT,
+  findspot_id INTEGER,
+  CONSTRAINT current_username_loggedin FOREIGN KEY (my_username) REFERENCES users(username),
+  CONSTRAINT findspot_id_post FOREIGN KEY (findspot_id) REFERENCES findspot(id)
+);

@@ -19,6 +19,8 @@ let newUserController = require("./controller/newUserController");
 
 let findSpotController = require("./controller/findSpotController");//uncomment this
 
+let commentsController = require("./controller/commentsController");
+
 app.get("/", (req, res) => {
     res.send("This is an Night Sky Finder Application server");
   });
@@ -28,6 +30,7 @@ app.use("/newusers", newUserController); // Use newUserController for /newusers 
 
 app.use("/findspots", findSpotController); // Use findSpotController for /findspots endpoint // uncomment this
 
+app.use("/comments", commentsController);
 // Error handling middleware (should be placed last)
 app.get("*", (req, res) => {
   res.status(404).json({ error: "Page not found!" });
