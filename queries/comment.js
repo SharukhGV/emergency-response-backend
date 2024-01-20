@@ -5,13 +5,13 @@ const getAllcomments = async () => await db.any("SELECT * FROM comments");
 
 
 
-// const deleteOne = async (id) => {
-//   try {
-//     await db.none("DELETE FROM comments WHERE id=$1", [id]);
-//   } catch (error) {
-//     throw new Error(`Error deleting comments: ${error.message}`);
-//   }
-// };
+const deleteOne = async (id) => {
+  try {
+    await db.none("DELETE FROM comments WHERE id=$1", [id]);
+  } catch (error) {
+    throw new Error(`Error deleting comments: ${error.message}`);
+  }
+};
 
 
 // const deleteOne = async (username, id) => {
@@ -102,5 +102,5 @@ module.exports = {
   getOnecomments,
 //   updateOnecomments,
   createcomments,
-//   deleteOne
+  deleteOne
 }

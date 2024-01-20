@@ -7,7 +7,7 @@ const {
     getOnecomments,
     // updateOnecomments,
     createcomments,
-    // deleteOne
+    deleteOne
 } = require("../queries/comment");
 
 
@@ -37,16 +37,16 @@ comments.get("/", async (req, res) => {
 // deleteOne
 
 
-// comments.delete("/:id", async (req, res) => {
-//   const { id } = req.params;
-//   // const { username } = req.body;
-//   try {
-//     await deleteOne(id);
-//     res.status(200).json({ message: 'comments deleted successfully' });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
+comments.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  // const { username } = req.body;
+  try {
+    await deleteOne(id);
+    res.status(200).json({ message: 'comments deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 comments.get("/:id", async (req, res) => {
   try {
