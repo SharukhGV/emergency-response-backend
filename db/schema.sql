@@ -37,3 +37,13 @@ CREATE TABLE comments (
   CONSTRAINT current_username_loggedin FOREIGN KEY (my_username) REFERENCES users(username),
   CONSTRAINT findspot_id_post FOREIGN KEY (findspot_id) REFERENCES findspot(id)
 );
+
+
+CREATE TABLE profile (
+  id serial PRIMARY KEY,
+  image_url TEXT,
+  about TEXT,
+  occupation TEXT,
+  my_username TEXT,
+  CONSTRAINT current_username_loggedin FOREIGN KEY (my_username) REFERENCES users(username)
+);
