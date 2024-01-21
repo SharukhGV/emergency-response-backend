@@ -44,6 +44,7 @@ CREATE TABLE profile (
   image_url TEXT,
   about TEXT,
   occupation TEXT,
+  date DATE NOT NULL,
   my_username TEXT,
   CONSTRAINT current_username_loggedin FOREIGN KEY (my_username) REFERENCES users(username)
 );

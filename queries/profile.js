@@ -25,7 +25,23 @@ const getAllprofiles = async () => await db.any("SELECT * FROM profile");
 const getOneprofile = async (id) =>
   await db.one("SELECT * FROM profile WHERE id=$1", id);
 
-  const updateOneprofile = async (id, profile) => {
+//   const updateOneprofile = async (id, profile) => {
+//     try {
+//       const result = await db.oneOrNone(
+//         "UPDATE profile SET image_url=$1, about=$2, occupation=$3 WHERE id=$4 RETURNING *",
+//         [
+//           profile.image_url,
+//           profile.about,
+//           profile.occupation,
+//           id          
+//         ]
+//       );
+//       return result; // Return the updated record if successful
+//     } catch (error) {
+//       throw new Error(`Error updating profile: ${error.message}`);
+//     }
+//   };
+const updateOneprofile = async (profile,id) => {
     try {
       const result = await db.oneOrNone(
         "UPDATE profile SET image_url=$1, about=$2, occupation=$3 WHERE id=$4 RETURNING *",
@@ -36,7 +52,12 @@ const getOneprofile = async (id) =>
           id          
         ]
       );
-      return result; // Return the updated record if successful
+  
+      if (result) {
+        return result; // Return the updated record if successful
+      } else {
+        throw new Error(`No matching record found for id: ${id}`);
+      }
     } catch (error) {
       throw new Error(`Error updating profile: ${error.message}`);
     }
@@ -55,16 +76,17 @@ const createprofile = async (profile) => {
     // }
 
     // If the username doesn't exist, proceed with the insertion
-    // const postDate = new Date(); // Get the current date
+    const postDate = new Date(); // Get the current date
 
     // Insert values into the 'profile' table
     const newprofile = await db.one(
-      "INSERT INTO profile (image_url, about, occupation, my_username) VALUES ($1, $2, $3, $4) RETURNING *",
+      "INSERT INTO profile (image_url, about, occupation, my_username, date) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [
         profile.image_url,
         profile.about,
         profile.occupation,
-        profile.my_username
+        profile.my_username,
+        postDate
       ]
     );
 

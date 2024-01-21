@@ -65,7 +65,7 @@ profiles.put("/:id", async (req, res) => {
     const finds = req.body;
 
     // Call the update function and handle the response
-    const updatedprofile = await updateOneprofile(finds);
+    const updatedprofile = await updateOneprofile(finds, id);
     res.json(updatedprofile);
   } catch (error) {
     console.log(error);
