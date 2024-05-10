@@ -111,7 +111,8 @@ newusers.post("/", async (req, res) => {
 
     newuser(newUser7)
 
-    return response.status(201).json({ message: "User created successfully!" });
+    // return response.json({ message: "User created successfully!" });
+    return res.json({ message: "User created successfully!" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to create user" });

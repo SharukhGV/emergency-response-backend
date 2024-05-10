@@ -120,7 +120,7 @@ userposts.post("/", async (req, res) => {
           error: `User Posts must only have fields: ${arrayofOBJValues.join(", ")}`,
         });
       }
-    
+    // 
   
     const createduserpost = await createuserpost(userPost);
     return response.status(201).json({ data: createduserpost });
