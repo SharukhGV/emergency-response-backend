@@ -15,7 +15,7 @@ const isValidId = (id) => {
   return Number.isInteger(idAsNum) && idAsNum > 0;
 };
 
-const arrayofOBJValues = ["image_url", "about", "occupation", "date", "my_username"];
+const arrayofOBJValues = ["image_url", "about", "occupation", "my_username"];
 const isValidUserProfile = (post) => {
   // must have all the Profile Fields
   for (let field of arrayofOBJValues) {

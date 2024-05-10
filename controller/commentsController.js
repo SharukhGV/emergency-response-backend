@@ -18,7 +18,7 @@ const isValidId = (id) => {
 };
 
 
-const arrayofOBJValues = ["description", "date", "my_username", "userpost_id"];
+const arrayofOBJValues = ["description", "my_username", "userpost_id"];
 const isValidUserComments = (post) => {
   // must have all the comments Fields
   for (let field of arrayofOBJValues) {
