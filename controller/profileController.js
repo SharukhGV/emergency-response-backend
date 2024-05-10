@@ -38,7 +38,7 @@ const isValidUserProfile = (post) => {
 profiles.get("/", async (req, res) => {
   try {
     const userprofile = await getAllprofiles();
-    return response.status(200).json({ data: userprofile });
+    return  res.status(200).json({ data: userprofile });
 
 
 
@@ -51,10 +51,10 @@ profiles.get("/", async (req, res) => {
 profiles.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    if(!isValidId(id)) return response.status(400).json({error: `id must be positive integer! Received ${id}`})
+    if(!isValidId(id)) return  res.status(400).json({error: `id must be positive integer! Received ${id}`})
 
     const userprofile = await getOneprofile(id);
-    response.status(200).json({ data: userprofile });
+     res.status(200).json({ data: userprofile });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -65,16 +65,16 @@ profiles.put("/:id", async (req, res) => {
     const { id } = req.params;
     const userprofile = req.body;
 
-    if(!isValidId(id)) return response.status(400).json({error: `id must be positive integer! Received ${id}`})
+    if(!isValidId(id)) return  res.status(400).json({error: `id must be positive integer! Received ${id}`})
 
     if (!isValidUserProfile(userprofile)) {
-      return response.status(400).json({
+      return  res.status(400).json({
         error: `User Profile must only have fields: ${arrayofOBJValues.join(", ")}`,
       });
     }
    
     const updatedprofile = await updateOneprofile(userprofile, id);
-    return response.status(200).json({ data: updatedprofile });
+    return  res.status(200).json({ data: updatedprofile });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -86,13 +86,13 @@ profiles.post("/", async (req, res) => {
     const userprofile = req.body;
 
       if (!isValidUserProfile(userprofile)) {
-        return response.status(400).json({
+        return  res.status(400).json({
           error: `User Profile must only have fields: ${arrayofOBJValues.join(", ")}`,
         });
       }
      
     const createdprofile = await createprofile(userprofile);
-    return response.status(201).json({ data: createdprofile });
+    return  res.status(201).json({ data: createdprofile });
 
 } catch (error) {
 

@@ -42,7 +42,7 @@ userposts.get("/", async (req, res) => {
   try {
     const posts = await getAlluserposts();
 
-return response.status(200).json({data: posts})
+return res.status(200).json({data: posts})
   
 
   } catch (error) {
@@ -56,7 +56,7 @@ userposts.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-if(!isValidId(id)) return response.status(400).json({error: `id must be positive integer! Received ${id}`})
+if(!isValidId(id)) return res.status(400).json({error: `id must be positive integer! Received ${id}`})
 
 
 
@@ -76,7 +76,7 @@ if(!isValidId(id)) return response.status(400).json({error: `id must be positive
 userposts.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    if(!isValidId(id)) return response.status(400).json({error: `id must be positive integer! Received ${id}`})
+    if(!isValidId(id)) return res.status(400).json({error: `id must be positive integer! Received ${id}`})
 
     const post = await getOneuserpost(id);
     return res.status(200).json({ data: post });
@@ -93,17 +93,17 @@ userposts.put("/:id", async (req, res) => {
     const { id } = req.params;
     const userPost = req.body;
 
-    if(!isValidId(id)) return response.status(400).json({error: `id must be positive integer! Received ${id}`})
+    if(!isValidId(id)) return res.status(400).json({error: `id must be positive integer! Received ${id}`})
 
     if (!isValidUserPost(userPost)) {
-      return response.status(400).json({
+      return res.status(400).json({
         error: `User Posts must only have fields: ${arrayofOBJValues.join(", ")}`,
       });
     }
  
 
     const updateduserpost = await updateOneuserpost(id, userPost);
-    return response.status(200).json({ data: updateduserpost });
+    return res.status(200).json({ data: updateduserpost });
 
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -116,17 +116,17 @@ userposts.post("/", async (req, res) => {
     const userPost = req.body;
 
       if (!isValidUserPost(userPost)) {
-        return response.status(400).json({
+        return res.status(400).json({
           error: `User Posts must only have fields: ${arrayofOBJValues.join(", ")}`,
         });
       }
     // 
   
     const createduserpost = await createuserpost(userPost);
-    return response.status(201).json({ data: createduserpost });
+    return res.status(201).json({ data: createduserpost });
 } catch (error) {
     
-    return response.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
 
 }
 });

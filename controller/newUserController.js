@@ -60,7 +60,7 @@ newusers.post("/login", async (req, res) => {
     const hashed_password = req.body.hashed_password;
     const username = req.body.username;
     if (!isValidUserObjectBody(req.body)) {
-      return response.status(400).json({
+      return res.status(400).json({
         error: `New Users must only have fields: ${arrayofOBJValues.join(", ")}`,
       });}
     if (!username || !hashed_password) {
@@ -81,10 +81,10 @@ newusers.post("/login", async (req, res) => {
 
       return res.json({ accessToken });
     } else {
-      return response.status(401).json({ error: 'Invalid username or password' });
+      return res.status(401).json({ error: 'Invalid username or password' });
     }
   } catch (error) {
-    response.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 

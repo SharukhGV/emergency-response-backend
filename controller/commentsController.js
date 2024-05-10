@@ -42,7 +42,7 @@ const isValidUserComments = (post) => {
 comments.get("/", async (req, res) => {
   try {
     const userComment = await getAllcomments();
-    return response.json(userComment);
+    return  res.json(userComment);
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: "Error getting all comments!" });
@@ -54,7 +54,7 @@ comments.get("/", async (req, res) => {
 comments.delete("/:id", async (req, res) => {
   try {  
     const { id } = req.params;
-    if(!isValidId(id)) return response.status(400).json({error: `id must be positive integer! Received ${id}`})
+    if(!isValidId(id)) return  res.status(400).json({error: `id must be positive integer! Received ${id}`})
 
     await deleteOne(id);
     res.status(200).json({ message: 'comments deleted successfully' });
@@ -66,7 +66,7 @@ comments.delete("/:id", async (req, res) => {
 comments.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    if(!isValidId(id)) return response.status(400).json({error: `id must be positive integer! Received ${id}`})
+    if(!isValidId(id)) return  res.status(400).json({error: `id must be positive integer! Received ${id}`})
 
     const userComment = await getOnecomments(id);
     res.json(userComment);
@@ -82,7 +82,7 @@ comments.post("/", async (req, res) => {
     const userComment = req.body;
 
       if (!isValidUserComments(userComment)) {
-        return response.status(400).json({
+        return  res.status(400).json({
           error: `User comment must only have fields: ${arrayofOBJValues.join(", ")}`,
         });
       }

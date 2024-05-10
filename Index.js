@@ -17,7 +17,7 @@ app.use(cors())
 
 let newUserController = require("./controller/newUserController");
 
-let userpostController = require("./controller/userpostController");//uncomment this
+let userpostController = require("./controller/userpostController");
 
 let commentsController = require("./controller/commentsController");
 
