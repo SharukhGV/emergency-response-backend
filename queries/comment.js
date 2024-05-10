@@ -22,12 +22,12 @@ const createcomments = async (comments) => {
     const postDate = new Date(); // Get the current date
     // Insert values into the 'comments' table
     const newcomments = await db.one(
-      "INSERT INTO comments (description, date, my_username, findspot_id) VALUES ($1, $2, $3, $4) RETURNING *",
+      "INSERT INTO comments (description, date, my_username, userpost_id) VALUES ($1, $2, $3, $4) RETURNING *",
       [
         comments.description,        
         postDate,
         comments.my_username,
-        comments.findspot_id,
+        comments.userpost_id,
       ]
     );
 

@@ -45,7 +45,7 @@ comments.get("/", async (req, res) => {
     return  res.json(userComment);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: "Error getting all comments!" });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -72,7 +72,7 @@ comments.get("/:id", async (req, res) => {
     res.json(userComment);
   } catch (error) {
     console.log(error);
-    res.status(404).json({ error: "That comments does not exist!" });
+    res.status(404).json({ error: error.message });
   }
 });
 
@@ -92,7 +92,7 @@ comments.post("/", async (req, res) => {
 } catch (error) {
     console.log(error);
     console.log("Incoming request body:", req.body);
-    res.status(400).json({ error: "Incorrect post body" });
+    res.status(400).json({ error: error.message });
 
 }
 });
