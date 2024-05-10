@@ -17,7 +17,7 @@ app.use(cors())
 
 let newUserController = require("./controller/newUserController");
 
-let findSpotController = require("./controller/findSpotController");//uncomment this
+let userpostController = require("./controller/userpostController");//uncomment this
 
 let commentsController = require("./controller/commentsController");
 
@@ -31,8 +31,7 @@ app.get("/", (req, res) => {
 
 app.use("/newusers", newUserController); // Use newUserController for /newusers endpoint
 
-app.use("/findspots", findSpotController); // Use findSpotController for /findspots endpoint // uncomment this
-
+app.use("/userposts", userpostController); // Used to be findSpotController for /findspots
 app.use("/comments", commentsController);
 app.use("/profile" , profileController)
 
@@ -41,8 +40,8 @@ app.get("*", (req, res) => {
   res.status(404).json({ error: "Page not found!" });
 });
   
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
-});
+// app.listen(3000, () => {
+//   console.log('Server is running on port 3000');
+// });
 
 module.exports = app

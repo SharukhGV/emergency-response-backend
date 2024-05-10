@@ -8,132 +8,134 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
-// Use cookie parser and session middleware
-
 app.use(cookieParser());
 
 app.use(session({
-  // Options for session management
-  secret: process.env.TOKEN_SECRET, // Replace with a strong secret key
+  secret: process.env.TOKEN_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: true }, // Consider setting secure for HTTPS
+  cookie: { secure: true },
 }));
 
 
-// // Your other middleware and route handlers...
-// cloudinary.v2.uploader.upload("https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg",
-//   { public_id: "olympic_flag" }, 
-//   function(error, result) {console.log(result); });
 
+// HELPER FUNCTIONS START
+
+const arrayofOBJValues = ["username", "hashed_password"];
+
+const isValidUserObjectBody = (post) => {
+  // must have all the New User Fields
+  for (let field of arrayofOBJValues) {
+    if (!post.hasOwnProperty(field)) {
+      return false;
+    }
+  }
+
+  // should not have extra fields
+  for (let field in post) {
+    if (!arrayofOBJValues.includes(field)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+// HELPER FUNCTIONS END
 
 // jwtMiddleware.js
 const jwt = require('jsonwebtoken');
-// const jwtMiddleware = require('./jwtMiddleware');
+
 function generateAccessToken(user) {
-    return jwt.sign({ id: user.id, username: user.username }, process.env.TOKEN_SECRET, { expiresIn: '15m' }); // Adjust expiration as needed
+  return jwt.sign({ id: user.id, username: user.username }, process.env.TOKEN_SECRET, { expiresIn: '15m' }); // Adjust expiration as needed
 }
 
 const {
-    newuser,
-    getAllSingleUser,
+  newuser,
+  getAllSingleUser,
 } = require("../queries/newUser");
 
+// HANDLE LOGGING IN A USER
 newusers.post("/login", async (req, res) => {
-    try {
-      const hashed_password = req.body.hashed_password;
-      const username = req.body.username;
-
-      // Validate inputs (example)
-      if (!username || !hashed_password) {
-        return res.status(400).json({ error: 'Invalid username or password' });
-      }
-  
-      const user = await getAllSingleUser(username);
-  
-      const isMatch = await bcrypt.compare(`${req.body.hashed_password}`, `${user[0].hashed_password}`);
-  
-      if (isMatch) {
-        const userInfo = {
-          userId: user[0].id,
-          username: user[0].username,
-        };
-  
-        // req.session.user = userInfo;
-  
-        const accessToken = generateAccessToken(userInfo);
-  
-        return res.json({ accessToken });
-      } else {
-        return res.status(401).json({ error: 'Invalid username or password' });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal server error' });
+  try {
+    const hashed_password = req.body.hashed_password;
+    const username = req.body.username;
+    if (!isValidUserObjectBody(req.body)) {
+      return response.status(400).json({
+        error: `New Users must only have fields: ${arrayofOBJValues.join(", ")}`,
+      });}
+    if (!username || !hashed_password) {
+      return res.status(400).json({ error: 'Invalid username or password' });
     }
-  });
-  
 
+    const user = await getAllSingleUser(username);
 
-newusers.post("/", async (req, res) => {
-    try {
-        //   const { username, hashed_password } = req.body; // Extract specific fields
-        const password = req.body.hashed_password
-        const username = req.body.username
-        // Validate input (e.g., check for empty fields, password strength)
-        if (!username || !password) {
-            return res.status(400).json({ error: "Invalid user data" });
-        }
+    const isMatch = await bcrypt.compare(`${req.body.hashed_password}`, `${user[0].hashed_password}`);
 
-        // Check for exact username match using a prepared statement
-        const existingUser = await db.query(
-            "SELECT * FROM users WHERE username = $1",
-            [username]
-        );
-        // Check if existingUser.rows is defined and is an array
-        if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
-            return res.status(400).json({ error: "Username already exists" });
-        }
+    if (isMatch) {
+      const userInfo = {
+        userId: user[0].id,
+        username: user[0].username,
+      };
 
+      const accessToken = generateAccessToken(userInfo);
 
-        // Hash password securely using bcrypt
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create the new user object
-        const newUser7 = { username: username, hashed_password: hashedPassword };
-
-        // Insert the user into the database
-        newuser(newUser7)
-        // Set session data (if applicable)
-        // ...
-
-        return res.json({ message: "User created successfully!" });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Failed to create user" });
-    }
-});
-
-
-
-// Handle user logout
-newusers.post('/logout', (req, res) => {
-    // Perform logout actions (e.g., blacklist the token)
-    res.clearCookie('access_token'); // Clear the access token cookie
-    res.sendStatus(204); // No Content
-});
-
-// Example route to retrieve user data based on the session
-newusers.get('/profile', (req, res) => {
-    if (req.session.user) {
-        const userData = req.session.user;
-        res.send(`User ID: ${userData.id}, Username: ${userData.username}`);
+      return res.json({ accessToken });
     } else {
-        res.send('Not logged in');
+      return response.status(401).json({ error: 'Invalid username or password' });
     }
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
+
+// HANDLE CREATING NEW USER
+newusers.post("/", async (req, res) => {
+  try {
+    const password = req.body.hashed_password
+    const username = req.body.username
+    if (!username || !password) {
+      return res.status(400).json({ error: "Invalid user data" });
+    }
+
+    const existingUser = await db.query(
+      "SELECT * FROM users WHERE username = $1",
+      [username]
+    );
+    if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
+      return res.status(400).json({ error: "Username already exists" });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser7 = { username: username, hashed_password: hashedPassword };
+
+    newuser(newUser7)
+
+    return response.status(201).json({ message: "User created successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to create user" });
+  }
+});
+
+
+
+// HANDLE LOGGING OUT USER
+newusers.post('/logout', (req, res) => {
+  res.clearCookie('access_token');
+  res.sendStatus(204);
+});
+
+// HANDLE GETTING USER INFORMATION (ID AND USERNAME)
+newusers.get('/profile', (req, res) => {
+  if (req.session.user) {
+    const userData = req.session.user;
+    res.send(`User ID: ${userData.id}, Username: ${userData.username}`);
+  } else {
+    res.send('Not logged in');
+  }
 });
 
 
 
 module.exports = newusers
-// generateAccessToken, authenticateToken

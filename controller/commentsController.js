@@ -11,10 +11,38 @@ const {
 } = require("../queries/comment");
 
 
+// HELPER FUNCTIONS START
+const isValidId = (id) => {
+  const idAsNum = Number(id);
+  return Number.isInteger(idAsNum) && idAsNum > 0;
+};
+
+
+const arrayofOBJValues = ["description", "date", "my_username", "userpost_id"];
+const isValidUserComments = (post) => {
+  // must have all the comments Fields
+  for (let field of arrayofOBJValues) {
+    if (!post.hasOwnProperty(field)) {
+      return false;
+    }
+  }
+
+  // should not have extra fields
+  for (let field in post) {
+    if (!arrayofOBJValues.includes(field)) {
+      return false;
+    }
+  }
+  // we got this far! All good!
+  return true;
+};
+
+// HELPER FUNCTIONS END
+
 comments.get("/", async (req, res) => {
   try {
-    const finds = await getAllcomments();
-    return res.json(finds);
+    const userComment = await getAllcomments();
+    return response.json(userComment);
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: "Error getting all comments!" });
@@ -22,25 +50,12 @@ comments.get("/", async (req, res) => {
 });
 
 
-// newusers.get("/userdata", async (req, res) => {
-//   try {
-//     const finds = await getAllSingleUsercommentss();
-//     return res.json(finds);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(400).json({ error: "Error getting all find-spots!" });
-//   }
-// });
-
-// getAllSingleUsercommentss
-
-// deleteOne
-
 
 comments.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-  // const { username } = req.body;
-  try {
+  try {  
+    const { id } = req.params;
+    if(!isValidId(id)) return response.status(400).json({error: `id must be positive integer! Received ${id}`})
+
     await deleteOne(id);
     res.status(200).json({ message: 'comments deleted successfully' });
   } catch (error) {
@@ -51,34 +66,28 @@ comments.delete("/:id", async (req, res) => {
 comments.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const finds = await getOnecomments(id);
-    res.json(finds);
+    if(!isValidId(id)) return response.status(400).json({error: `id must be positive integer! Received ${id}`})
+
+    const userComment = await getOnecomments(id);
+    res.json(userComment);
   } catch (error) {
     console.log(error);
     res.status(404).json({ error: "That comments does not exist!" });
   }
 });
 
-// comments.put("/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const finds = req.body;
-
-//     // Call the update function and handle the response
-//     const updatedcomments = await updateOnecomments(id, finds);
-//     res.json(updatedcomments);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(400).json({ error: "Cannot Update Archive Status of specified comments" });
-//   }
-// });
-
 
 comments.post("/", async (req, res) => {
   try {
-    const finds = req.body;
+    const userComment = req.body;
 
-    const createdcomments = await createcomments(finds);
+      if (!isValidUserComments(userComment)) {
+        return response.status(400).json({
+          error: `User comment must only have fields: ${arrayofOBJValues.join(", ")}`,
+        });
+      }
+   
+    const createdcomments = await createcomments(userComment);
     res.json(createdcomments);
 } catch (error) {
     console.log(error);

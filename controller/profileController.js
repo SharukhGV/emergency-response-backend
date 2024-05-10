@@ -1,6 +1,5 @@
 
 const express = require("express");
-// const router = express.Router();
 const profiles = express.Router();
 const {
     getAllprofiles,
@@ -10,80 +9,94 @@ const {
     // deleteOne
 } = require("../queries/profile");
 
+// HELPER FUNCTIONS START
+const isValidId = (id) => {
+  const idAsNum = Number(id);
+  return Number.isInteger(idAsNum) && idAsNum > 0;
+};
 
+const arrayofOBJValues = ["image_url", "about", "occupation", "date", "my_username"];
+const isValidUserProfile = (post) => {
+  // must have all the Profile Fields
+  for (let field of arrayofOBJValues) {
+    if (!post.hasOwnProperty(field)) {
+      return false;
+    }
+  }
+
+  // should not have extra fields
+  for (let field in post) {
+    if (!arrayofOBJValues.includes(field)) {
+      return false;
+    }
+  }
+  // we got this far! All good!
+  return true;
+};
+
+// HELPER FUNCTIONS END
 profiles.get("/", async (req, res) => {
   try {
-    const finds = await getAllprofiles();
-    return res.json(finds);
+    const userprofile = await getAllprofiles();
+    return response.status(200).json({ data: userprofile });
+
+
+
   } catch (error) {
-    console.log(error);
-    res.status(400).json({ error: "Error getting all find-spots!" });
+    res.status(500).json({ error: error.message });
   }
 });
 
 
-// newusers.get("/userdata", async (req, res) => {
-//   try {
-//     const finds = await getAllSingleUserprofiles();
-//     return res.json(finds);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(400).json({ error: "Error getting all find-spots!" });
-//   }
-// });
-
-// getAllSingleUserprofiles
-
-// deleteOne
-
-
-// profiles.delete("/:id", async (req, res) => {
-//   const { id } = req.params;
-//   // const { username } = req.body;
-//   try {
-//     await deleteOne(id);
-//     res.status(200).json({ message: 'profile deleted successfully' });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
-
 profiles.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const finds = await getOneprofile(id);
-    res.json(finds);
-  } catch (error) {
-    console.log(error);
-    res.status(404).json({ error: "That profile does not exist!" });
-  }
+    if(!isValidId(id)) return response.status(400).json({error: `id must be positive integer! Received ${id}`})
+
+    const userprofile = await getOneprofile(id);
+    response.status(200).json({ data: userprofile });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
 });
 
 profiles.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const finds = req.body;
+    const userprofile = req.body;
 
-    // Call the update function and handle the response
-    const updatedprofile = await updateOneprofile(finds, id);
-    res.json(updatedprofile);
+    if(!isValidId(id)) return response.status(400).json({error: `id must be positive integer! Received ${id}`})
+
+    if (!isValidUserProfile(userprofile)) {
+      return response.status(400).json({
+        error: `User Profile must only have fields: ${arrayofOBJValues.join(", ")}`,
+      });
+    }
+   
+    const updatedprofile = await updateOneprofile(userprofile, id);
+    return response.status(200).json({ data: updatedprofile });
   } catch (error) {
-    console.log(error);
-    res.status(400).json({ error: "Cannot Update Archive Status of specified profile" });
+    res.status(500).json({ error: error.message });
   }
 });
 
 
 profiles.post("/", async (req, res) => {
   try {
-    const finds = req.body;
+    const userprofile = req.body;
 
-    const createdprofile = await createprofile(finds);
-    res.json(createdprofile);
+      if (!isValidUserProfile(userprofile)) {
+        return response.status(400).json({
+          error: `User Profile must only have fields: ${arrayofOBJValues.join(", ")}`,
+        });
+      }
+     
+    const createdprofile = await createprofile(userprofile);
+    return response.status(201).json({ data: createdprofile });
+
 } catch (error) {
-    console.log(error);
-    console.log("Incoming request body:", req.body);
-    res.status(400).json({ error: "Incorrect post body" });
+
+    res.status(500).json({ error: error.message });
 
 }
 });
