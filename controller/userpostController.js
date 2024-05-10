@@ -104,7 +104,7 @@ userposts.put("/:id", async (req, res) => {
 
     const updateduserpost = await updateOneuserpost(id, userPost);
     return response.status(200).json({ data: updateduserpost });
-    
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -123,7 +123,7 @@ userposts.post("/", async (req, res) => {
     
   
     const createduserpost = await createuserpost(userPost);
-    response.status(201).json({ data: createduserpost });
+    return response.status(201).json({ data: createduserpost });
 } catch (error) {
     
     return response.status(500).json({ error: "Internal Server Error" });
