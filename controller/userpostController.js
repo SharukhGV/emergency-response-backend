@@ -16,6 +16,8 @@ const isValidId = (id) => {
   return Number.isInteger(idAsNum) && idAsNum > 0;
 };
 const arrayofOBJValues = ["full_name", "latitude", "longitude", "description", "skybrightness", "image_url", "username"];
+const arrayofOBJValuesPUT = ["full_name", "latitude", "longitude", "description", "skybrightness", "image_url", "username", "date"];
+
 const isValidUserPost = (post) => {
   // must have all the Post Fields
   for (let field of arrayofOBJValues) {
@@ -27,6 +29,24 @@ const isValidUserPost = (post) => {
   // should not have extra fields
   for (let field in post) {
     if (!arrayofOBJValues.includes(field)) {
+      return false;
+    }
+  }
+  // we got this far! All good!
+  return true;
+};
+
+const isValidUserPostPUT = (post) => {
+  // must have all the Post Fields
+  for (let field of arrayofOBJValuesPUT) {
+    if (!post.hasOwnProperty(field)) {
+      return false;
+    }
+  }
+
+  // should not have extra fields
+  for (let field in post) {
+    if (!arrayofOBJValuesPUT.includes(field)) {
       return false;
     }
   }
@@ -95,9 +115,9 @@ userposts.put("/:id", async (req, res) => {
 
     if(!isValidId(id)) return res.status(400).json({error: `id must be positive integer! Received ${id}`})
 
-    if (!isValidUserPost(userPost)) {
+    if (!isValidUserPostPUT(userPost)) {
       return res.status(400).json({
-        error: `User Posts must only have fields: ${arrayofOBJValues.join(", ")}`,
+        error: `User Posts must only have fields: ${arrayofOBJValuesPUT.join(", ")}`,
       });
     }
  
