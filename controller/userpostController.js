@@ -118,7 +118,7 @@ userposts.put("/:id", async (req, res) => {
 
     if (!isValidUserPostPUT(userPost)) {
       return res.status(400).json({
-        error: `User Posts must only have fields: ${arrayofOBJValuesPUT.join(", ")}`,
+        error: `User Posts must only have fields: ${arrayofOBJValuesPUT.join(", ")} received ${userPost}`,
       });
     }
  
