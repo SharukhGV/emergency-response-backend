@@ -16,7 +16,8 @@ const isValidId = (id) => {
   return Number.isInteger(idAsNum) && idAsNum > 0;
 };
 const arrayofOBJValues = ["full_name", "latitude", "longitude", "description", "skybrightness", "image_url", "username"];
-const arrayofOBJValuesPUT = ["full_name", "latitude", "longitude", "description", "skybrightness", "image_url", "username", "date"];
+// can add other fields if need be in the future here for Update instance PUT
+const arrayofOBJValuesPUT = ["full_name", "latitude", "longitude", "description", "skybrightness", "image_url", "username"];
 
 const isValidUserPost = (post) => {
   // must have all the Post Fields

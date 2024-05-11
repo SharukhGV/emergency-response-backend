@@ -15,6 +15,8 @@ const getOneuserpost = async (id) =>
   await db.one("SELECT * FROM userpost WHERE id=$1", id);
 
   const updateOneuserpost = async (id, userpost) => {
+    const postDate = new Date(); 
+
       const result = await db.oneOrNone(
         "UPDATE userpost SET full_name=$1, latitude=$2, longitude=$3, description=$4, skybrightness=$5, date=$6, username=$7, image_url=$8 WHERE id=$9 RETURNING *",
         [
@@ -23,7 +25,7 @@ const getOneuserpost = async (id) =>
           userpost.longitude,
           userpost.description,
           userpost.skybrightness,
-          userpost.date,
+          postDate,
           userpost.username,
           userpost.image_url,
           id 
