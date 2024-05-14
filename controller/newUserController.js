@@ -105,10 +105,10 @@ newusers.post("/", async (req, res) => {
     // if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
     //   return res.status(400).json({ error: "Username already exists" });
     // }
-    const user = await getAllSingleUser(username);
-    if(!!user){return res.status(400).json({ error: "Username already exists" });
-    }
-    else{
+    // const user = await getAllSingleUser(username);
+    // if(!!user){return res.status(400).json({ error: "Username already exists" });
+    // }
+    // else{
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser7 = { username: username, hashed_password: hashedPassword };
@@ -116,7 +116,7 @@ newusers.post("/", async (req, res) => {
     newuser(newUser7)
 
     // return response.json({ message: "User created successfully!" });
-    return res.json({ message: "User created successfully!" });}
+    return res.json({ message: "User created successfully!" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to create user" });

@@ -1,6 +1,9 @@
 
 const db = require("../db/dbConfig");
 const newuser = async (userInfo) => {
+  const userz = await db.any("SELECT id, username, hashed_password FROM users WHERE username=$1", username);
+  if(!!userz){throw new Error('User Already Exists!');}
+  else{
       const insertNewUser = await db.one(
         "INSERT INTO users (createdAt, username, hashed_password) VALUES($1, $2, $3) RETURNING *",
         [
@@ -11,7 +14,7 @@ const newuser = async (userInfo) => {
       );
     
       return insertNewUser;
-    
+  }
   };
 
 
