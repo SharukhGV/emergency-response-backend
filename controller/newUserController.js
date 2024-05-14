@@ -102,7 +102,9 @@ newusers.post("/", async (req, res) => {
       "SELECT * FROM users WHERE username = $1",
       [username]
     );
-    if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
+    // if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
+      if (!existingUser) {
+
       return res.status(400).json({ error: "Username already exists" });
     }
     // const user = await getAllSingleUser(username);
