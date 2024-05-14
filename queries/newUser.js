@@ -18,9 +18,9 @@ const newuser = async (userInfo) => {
 
 const getAllSingleUser = async (username) => {
     const userz = await db.any("SELECT id, username, hashed_password FROM users WHERE username=$1", username);
-    if(!!userz) throw new Error('User not found!');
-
-    return userz;
+    if(userz){return userz;}
+    else{throw new Error('User not found!');
+  }
   
 };
 
