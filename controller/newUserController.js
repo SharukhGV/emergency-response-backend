@@ -106,7 +106,7 @@ newusers.post("/", async (req, res) => {
     //   return res.status(400).json({ error: "Username already exists" });
     // }
     const user = await getAllSingleUser(username);
-    if(!user){return res.status(400).json({ error: "Username already exists" });
+    if(!!user){return res.status(400).json({ error: "Username already exists" });
     }
     else{
     const hashedPassword = await bcrypt.hash(password, 10);
