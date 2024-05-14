@@ -98,12 +98,15 @@ newusers.post("/", async (req, res) => {
       return res.status(400).json({ error: "Invalid user data" });
     }
 
-    const existingUser = await db.query(
-      "SELECT * FROM users WHERE username = $1",
-      [username]
-    );
-    if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
-      return res.status(400).json({ error: "Username already exists" });
+    // const existingUser = await db.query(
+    //   "SELECT * FROM users WHERE username = $1",
+    //   [username]
+    // );
+    // if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
+    //   return res.status(400).json({ error: "Username already exists" });
+    // }
+    const user = await getAllSingleUser(username);
+    if(!user){return res.status(400).json({ error: "Username already exists" });
     }
     else{
     const hashedPassword = await bcrypt.hash(password, 10);
