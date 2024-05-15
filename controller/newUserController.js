@@ -103,7 +103,7 @@ newusers.post("/", async (req, res) => {
       [username]
     );
     // if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
-      if (!existingUser) {
+      if (!!existingUser) {
 
       return res.status(400).json({ error: "Username already exists" });
     }
