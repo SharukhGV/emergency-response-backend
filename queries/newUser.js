@@ -28,9 +28,14 @@ const getAllSingleUser = async (username) => {
   
 // };
 
+const existingUser = async (username) => {
+  const userz =  await db.query(`SELECT username FROM users WHERE username=$1`,[username]);
+return userz
+}
 module.exports = {
     newuser,
-  getAllSingleUser
+  getAllSingleUser,
+  existingUser
 };
 
   
