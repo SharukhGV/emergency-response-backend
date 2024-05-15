@@ -52,6 +52,7 @@ function generateAccessToken(user) {
 const {
   newuser,
   getAllSingleUser,
+  existingUser
 } = require("../queries/newUser");
 
 // HANDLE LOGGING IN A USER
@@ -98,11 +99,7 @@ newusers.post("/", async (req, res) => {
       return res.status(400).json({ error: "Invalid user data" });
     }
 
-    const existingUser = await db.query(
-      "SELECT * FROM users WHERE username = $1",
-      [username]
-    );
-    if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
+    if (Array.isArray(existingUser(username).rows) && existingUser(username).rows.length > 0) {
       // if (!!existingUser.rows.length) {
 
       return res.status(400).json({ error: "Username already exists" });
