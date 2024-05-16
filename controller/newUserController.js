@@ -52,7 +52,21 @@ function generateAccessToken(user) {
 const {
   newuser,
   getAllSingleUser,
+  existingUser,
 } = require("../queries/newUser");
+
+newusers.get("/", async(req,res) => {
+  try {
+    const existinguser = await existingUser();
+    return  res.status(200).json({ data: existinguser });
+
+
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 // HANDLE LOGGING IN A USER
 newusers.post("/login", async (req, res) => {
