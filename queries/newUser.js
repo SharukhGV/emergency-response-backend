@@ -21,17 +21,10 @@ const newuser = async (userInfo) => {
 
 const getAllSingleUser = async (username) => {
     const userz = await db.any("SELECT id, username, hashed_password FROM users WHERE username=$1", username);
-    // if(!!userz){return userz;}
-    // else{throw new Error('User not found!');
+
     return userz
   }
   
-// };
-
-const existingUser = async (username) => {
-  const userz =  await db.query(`SELECT username FROM users WHERE username=$1`,[username]);
-return userz
-}
 module.exports = {
     newuser,
   getAllSingleUser,
