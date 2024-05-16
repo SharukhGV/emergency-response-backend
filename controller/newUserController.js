@@ -52,7 +52,6 @@ function generateAccessToken(user) {
 const {
   newuser,
   getAllSingleUser,
-  existingUser
 } = require("../queries/newUser");
 
 // HANDLE LOGGING IN A USER

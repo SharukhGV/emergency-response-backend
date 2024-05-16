@@ -28,7 +28,6 @@ const getAllSingleUser = async (username) => {
 module.exports = {
     newuser,
   getAllSingleUser,
-  existingUser
 };
 
   
