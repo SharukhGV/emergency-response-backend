@@ -90,6 +90,8 @@ newusers.post("/login", async (req, res) => {
 });
 
 
+
+
 // HANDLE CREATING NEW USER
 newusers.post("/", async (req, res) => {
   try {
@@ -99,8 +101,12 @@ newusers.post("/", async (req, res) => {
       return res.status(400).json({ error: "Invalid user data" });
     }
 
-    if (Array.isArray(existingUser(username).rows) && existingUser(username).rows.length > 0) {
-      // if (!!existingUser.rows.length) {
+    const existingUser = await db.query(
+      "SELECT * FROM users WHERE username = $1",
+      [username]
+    );
+    if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
+      // if (!existingUser) {
 
       return res.status(400).json({ error: "Username already exists" });
     }
@@ -121,6 +127,7 @@ newusers.post("/", async (req, res) => {
     res.status(500).json({ error: "Failed to create user" });
   }
 });
+
 
 
 
