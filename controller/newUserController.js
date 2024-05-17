@@ -52,21 +52,7 @@ function generateAccessToken(user) {
 const {
   newuser,
   getAllSingleUser,
-  existingUser,
 } = require("../queries/newUser");
-
-newusers.get("/", async(req,res) => {
-  try {
-    const existinguser = await existingUser();
-    return  res.status(200).json({ data: existinguser });
-
-
-
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 
 // HANDLE LOGGING IN A USER
 newusers.post("/login", async (req, res) => {
@@ -119,21 +105,15 @@ newusers.post("/", async (req, res) => {
       [username]
     );
     if (Array.isArray(existingUser.rows) && existingUser.rows.length > 0) {
-      // if (!existingUser) {
 
       return res.status(400).json({ error: "Username already exists" });
     }
-    // const user = await getAllSingleUser(username);
-    // if(!!user){return res.status(400).json({ error: "Username already exists" });
-    // }
-    // else{
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser7 = { username: username, hashed_password: hashedPassword };
 
     newuser(newUser7)
 
-    // return response.json({ message: "User created successfully!" });
     return res.json({ message: "User created successfully!" });
   } catch (error) {
     console.error(error);
