@@ -6,7 +6,7 @@ const getAlluserposts = async () => await db.any("SELECT * FROM userpost");
 
 const deleteOne = async (id) => {
   
-    await db.none("DELETE FROM userpost WHERE id=$1", [id]);
+    await db.oneOrNone("DELETE FROM userpost WHERE id=$1", [id]);
   
 };
 
