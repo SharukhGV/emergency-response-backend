@@ -43,6 +43,6 @@ CREATE TABLE comments (
   my_username TEXT,
   userpost_id INTEGER,
   CONSTRAINT current_username_loggedin FOREIGN KEY (my_username) REFERENCES users(username),
-  CONSTRAINT findspot_id_post FOREIGN KEY (userpost_id) REFERENCES userpost(id)
+  CONSTRAINT findspot_id_post FOREIGN KEY (userpost_id) REFERENCES userpost(id) ON DELETE CASCADE
 );
 
