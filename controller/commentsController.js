@@ -1,13 +1,11 @@
 
 const express = require("express");
-// const router = express.Router();
 const comments = express.Router();
 const {
-    getAllcomments,
-    getOnecomments,
-    // updateOnecomments,
-    createcomments,
-    deleteOne
+  getAllcomments,
+  getOnecomments,
+  createcomments,
+  deleteOne
 } = require("../queries/comment");
 
 
@@ -20,20 +18,18 @@ const isValidId = (id) => {
 
 const arrayofOBJValues = ["description", "my_username", "userpost_id"];
 const isValidUserComments = (post) => {
-  // must have all the comments Fields
+
   for (let field of arrayofOBJValues) {
     if (!post.hasOwnProperty(field)) {
       return false;
     }
   }
 
-  // should not have extra fields
   for (let field in post) {
     if (!arrayofOBJValues.includes(field)) {
       return false;
     }
   }
-  // we got this far! All good!
   return true;
 };
 
@@ -42,7 +38,7 @@ const isValidUserComments = (post) => {
 comments.get("/", async (req, res) => {
   try {
     const userComment = await getAllcomments();
-    return  res.json(userComment);
+    return res.json(userComment);
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: error.message });
@@ -52,9 +48,9 @@ comments.get("/", async (req, res) => {
 
 
 comments.delete("/:id", async (req, res) => {
-  try {  
+  try {
     const { id } = req.params;
-    if(!isValidId(id)) return  res.status(400).json({error: `id must be positive integer! Received ${id}`})
+    if (!isValidId(id)) return res.status(400).json({ error: `id must be positive integer! Received ${id}` })
 
     await deleteOne(id);
     res.status(200).json({ message: 'comments deleted successfully' });
@@ -66,7 +62,7 @@ comments.delete("/:id", async (req, res) => {
 comments.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    if(!isValidId(id)) return  res.status(400).json({error: `id must be positive integer! Received ${id}`})
+    if (!isValidId(id)) return res.status(400).json({ error: `id must be positive integer! Received ${id}` })
 
     const userComment = await getOnecomments(id);
     res.json(userComment);
@@ -81,20 +77,20 @@ comments.post("/", async (req, res) => {
   try {
     const userComment = req.body;
 
-      if (!isValidUserComments(userComment)) {
-        return  res.status(400).json({
-          error: `User comment must only have fields: ${arrayofOBJValues.join(", ")}`,
-        });
-      }
-   
+    if (!isValidUserComments(userComment)) {
+      return res.status(400).json({
+        error: `User comment must only have fields: ${arrayofOBJValues.join(", ")}`,
+      });
+    }
+
     const createdcomments = await createcomments(userComment);
     res.json(createdcomments);
-} catch (error) {
+  } catch (error) {
     console.log(error);
     console.log("Incoming request body:", req.body);
     res.status(400).json({ error: error.message });
 
-}
+  }
 });
 
 module.exports = comments
