@@ -2,11 +2,11 @@
 const express = require("express");
 const userposts = express.Router();
 const {
-    getAlluserposts,
-    getOneuserpost,
-    updateOneuserpost,
-    createuserpost,
-    deleteOne
+  getAlluserposts,
+  getOneuserpost,
+  updateOneuserpost,
+  createuserpost,
+  deleteOne
 } = require("../queries/userpost");
 
 
@@ -16,42 +16,35 @@ const isValidId = (id) => {
   return Number.isInteger(idAsNum) && idAsNum > 0;
 };
 const arrayofOBJValues = ["full_name", "latitude", "longitude", "description", "skybrightness", "image_url", "username"];
-// can add other fields if need be in the future here for Update instance PUT
 const arrayofOBJValuesPUT = ["full_name", "latitude", "longitude", "description", "skybrightness", "image_url", "username"];
 
 const isValidUserPost = (post) => {
-  // must have all the Post Fields
   for (let field of arrayofOBJValues) {
     if (!post.hasOwnProperty(field)) {
       return false;
     }
   }
 
-  // should not have extra fields
   for (let field in post) {
     if (!arrayofOBJValues.includes(field)) {
       return false;
     }
   }
-  // we got this far! All good!
   return true;
 };
 
 const isValidUserPostPUT = (post) => {
-  // must have all the Post Fields
   for (let field of arrayofOBJValuesPUT) {
     if (!post.hasOwnProperty(field)) {
       return false;
     }
   }
 
-  // should not have extra fields
   for (let field in post) {
     if (!arrayofOBJValuesPUT.includes(field)) {
       return false;
     }
   }
-  // we got this far! All good!
   return true;
 };
 
@@ -63,8 +56,8 @@ userposts.get("/", async (req, res) => {
   try {
     const posts = await getAlluserposts();
 
-return res.status(200).json({data: posts})
-  
+    return res.status(200).json({ data: posts })
+
 
   } catch (error) {
     console.log(error);
@@ -77,11 +70,11 @@ userposts.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-if(!isValidId(id)) return res.status(400).json({error: `id must be positive integer! Received ${id}`})
+    if (!isValidId(id)) return res.status(400).json({ error: `id must be positive integer! Received ${id}` })
 
 
 
-    
+
     const deletedPost = await deleteOne(id);
 
 
@@ -97,7 +90,7 @@ if(!isValidId(id)) return res.status(400).json({error: `id must be positive inte
 userposts.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    if(!isValidId(id)) return res.status(400).json({error: `id must be positive integer! Received ${id}`})
+    if (!isValidId(id)) return res.status(400).json({ error: `id must be positive integer! Received ${id}` })
 
     const post = await getOneuserpost(id);
     return res.status(200).json({ data: post });
@@ -114,14 +107,14 @@ userposts.put("/:id", async (req, res) => {
     const { id } = req.params;
     const userPost = req.body;
 
-    if(!isValidId(id)) return res.status(400).json({error: `id must be positive integer! Received ${id}`})
+    if (!isValidId(id)) return res.status(400).json({ error: `id must be positive integer! Received ${id}` })
 
     if (!isValidUserPostPUT(userPost)) {
       return res.status(400).json({
         error: `User Posts must only have fields: ${arrayofOBJValuesPUT.join(", ")} received ${userPost}`,
       });
     }
- 
+
 
     const updateduserpost = await updateOneuserpost(id, userPost);
     return res.status(200).json({ data: updateduserpost });
@@ -136,20 +129,20 @@ userposts.post("/", async (req, res) => {
   try {
     const userPost = req.body;
 
-      if (!isValidUserPost(userPost)) {
-        return res.status(400).json({
-          error: `User Posts must only have fields: ${arrayofOBJValues.join(", ")}`,
-        });
-      }
+    if (!isValidUserPost(userPost)) {
+      return res.status(400).json({
+        error: `User Posts must only have fields: ${arrayofOBJValues.join(", ")}`,
+      });
+    }
     // 
-  
+
     const createduserpost = await createuserpost(userPost);
     return res.status(201).json({ data: createduserpost });
-} catch (error) {
-    
+  } catch (error) {
+
     return res.status(500).json({ error: "Internal Server Error" });
 
-}
+  }
 });
 
 module.exports = userposts

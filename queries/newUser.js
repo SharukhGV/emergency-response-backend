@@ -1,37 +1,31 @@
 
 const db = require("../db/dbConfig");
 const newuser = async (userInfo) => {
-  // const userz = await db.any("SELECT id, username, hashed_password FROM users WHERE username=$1", username);
-  // if(!!userz){Promise.reject(new Error(error));;}
-  // else{
-      const insertNewUser = await db.one(
-        "INSERT INTO users (createdAt, username, hashed_password) VALUES($1, $2, $3) RETURNING *",
-        [
-          Date.now(),
-          userInfo.username,
-          userInfo.hashed_password,
-        ]
-      );
-    
-      return insertNewUser;
-  // }
-  };
+
+  const insertNewUser = await db.one(
+    "INSERT INTO users (createdAt, username, hashed_password) VALUES($1, $2, $3) RETURNING *",
+    [
+      Date.now(),
+      userInfo.username,
+      userInfo.hashed_password,
+    ]
+  );
+
+  return insertNewUser;
+};
 
 
 
 const getAllSingleUser = async (username) => {
-    const userz = await db.any("SELECT id, username, hashed_password FROM users WHERE username=$1", username);
-    // if(!!userz){return userz;}
-    // else{throw new Error('User not found!');
-    return userz
-  }
-  
-// };
+  const userz = await db.any("SELECT id, username, hashed_password FROM users WHERE username=$1", username);
+
+  return userz
+}
+
 
 
 module.exports = {
-    newuser,
+  newuser,
   getAllSingleUser,
 };
 
-  

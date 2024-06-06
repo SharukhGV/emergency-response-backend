@@ -8,9 +8,8 @@ const cn = {
     database: process.env.PG_DATABASE,
     user: process.env.PG_USER,
     password: process.env.PG_PW,
-    max: 30 // use up to 30 connections
+    max: 30 
 
-    // "types" - in case you want to set custom type parsers on the pool level
 };
 console.log(cn)
 

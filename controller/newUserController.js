@@ -24,14 +24,13 @@ app.use(session({
 const arrayofOBJValues = ["username", "hashed_password"];
 
 const isValidUserObjectBody = (post) => {
-  // must have all the New User Fields
+
   for (let field of arrayofOBJValues) {
     if (!post.hasOwnProperty(field)) {
       return false;
     }
   }
 
-  // should not have extra fields
   for (let field in post) {
     if (!arrayofOBJValues.includes(field)) {
       return false;
@@ -62,7 +61,8 @@ newusers.post("/login", async (req, res) => {
     if (!isValidUserObjectBody(req.body)) {
       return res.status(400).json({
         error: `New Users must only have fields: ${arrayofOBJValues.join(", ")}`,
-      });}
+      });
+    }
     if (!username || !hashed_password) {
       return res.status(400).json({ error: 'Invalid username or password' });
     }
