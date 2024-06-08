@@ -11,8 +11,10 @@ const deleteOne = async (id) => {
 };
 
 
+
+
 const getOneuserpost = async (id) =>
-  await db.one("SELECT * FROM userpost WHERE id=$1", id);
+  await db.one("SELECT userpost.id,userpost.full_name, userpost.latitude, userpost.longitude, userpost.description, userpost.skybrightness, userpost.date, userpost.username, userpost.image_url,array_agg(comments.id) AS comments_id,array_agg(comments.description) AS comments_description,array_agg(comments.date) AS comments_date, array_agg(comments.my_username) AS comments_username FROM userpost JOIN comments ON userpost.id=comments.userpost_id WHERE userpost.id=$1 GROUP BY userpost.id ORDER BY userpost.id", id);
 
   const updateOneuserpost = async (id, userpost) => {
     const postDate = new Date(); 
