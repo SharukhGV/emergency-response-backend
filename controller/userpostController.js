@@ -6,7 +6,7 @@ const {
   getOneuserpost,
   updateOneuserpost,
   createuserpost,
-  deleteOne
+  deleteOne,
 } = require("../queries/userpost");
 
 
@@ -144,5 +144,6 @@ userposts.post("/", async (req, res) => {
 
   }
 });
+
 
 module.exports = userposts

@@ -33,7 +33,7 @@ CREATE TABLE userpost (
   date DATE NOT NULL,
   image_url TEXT,
   username TEXT,
-  CONSTRAINT fk_findspot_username FOREIGN KEY (username) REFERENCES users(username)
+  CONSTRAINT current_user_post_username FOREIGN KEY (username) REFERENCES users(username)
 );
 
 CREATE TABLE comments (
@@ -43,6 +43,17 @@ CREATE TABLE comments (
   my_username TEXT,
   userpost_id INTEGER,
   CONSTRAINT current_username_loggedin FOREIGN KEY (my_username) REFERENCES users(username),
-  CONSTRAINT findspot_id_post FOREIGN KEY (userpost_id) REFERENCES userpost(id) ON DELETE CASCADE
+  CONSTRAINT current_user_post_id FOREIGN KEY (userpost_id) REFERENCES userpost(id) ON DELETE CASCADE
 );
 
+CREATE TABLE communityinteractions (
+  id serial PRIMARY KEY,
+  informative INTEGER NOT NULL DEFAULT 0,
+  surprising INTEGER NOT NULL DEFAULT 0,
+  thanks INTEGER NOT NULL DEFAULT 0,
+  user_post_id INTEGER,
+  username TEXT,
+  UNIQUE (user_post_id, username),
+  CONSTRAINT current_user_post_id FOREIGN KEY (user_post_id) REFERENCES userpost(id) ON DELETE CASCADE,
+  CONSTRAINT current_username FOREIGN KEY (username) REFERENCES users(username)
+);

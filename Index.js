@@ -17,6 +17,7 @@ let commentsController = require("./controller/commentsController");
 
 let profileController = require("./controller/profileController");
 
+let communityInteractions = require("./controller/communityInteractionsController");
 
 app.get("/", (req, res) => {
   res.send("This is an Night Sky Finder Application server");
@@ -27,6 +28,7 @@ app.use("/newusers", newUserController);
 app.use("/userposts", userpostController);
 app.use("/comments", commentsController);
 app.use("/profile", profileController)
+app.use("/communityinteractions", communityInteractions)
 
 app.get("*", (req, res) => {
   res.status(404).json({ error: "Page not found!" });
