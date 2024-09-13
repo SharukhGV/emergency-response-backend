@@ -36,4 +36,4 @@ jobs:
         with:
           project: "sharukhgvel-hiveheaven-7"
           entrypoint: "server.js"
-          root: "root directory"
+          root: ""
