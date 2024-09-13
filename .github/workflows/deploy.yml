@@ -38,5 +38,5 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: "sharukhgvel-hiveheaven-7"
-          entrypoint: "server.js"
+          entrypoint: "app.js"
           root: "/"
