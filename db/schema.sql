@@ -46,3 +46,13 @@ CREATE TABLE comments (
   CONSTRAINT findspot_id_post FOREIGN KEY (userpost_id) REFERENCES userpost(id) ON DELETE CASCADE
 );
 
+CREATE TABLE dreams (
+  id serial PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  date DATE NOT NULL,
+  isDayDream BOOLEAN NOT NULL DEFAULT false,
+  createdAt BIGINT,
+  username TEXT,
+  CONSTRAINT fk_user FOREIGN KEY (username) REFERENCES users(username)
+);
