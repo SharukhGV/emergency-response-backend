@@ -31,6 +31,22 @@ const isValidDream = (dream) => {
   }
   return true;
 };
+
+const isValidDreamUpdate = (dream) => {
+  const updateFields = ["title", "description", "date", "isDayDream"];
+  for (let field of updateFields) {
+    if (!dream.hasOwnProperty(field)) {
+      return false;
+    }
+  }
+
+  for (let field in dream) {
+    if (!updateFields.includes(field)) {
+      return false;
+    }
+  }
+  return true;
+};
 // HELPER FUNCTIONS END
 
 // READ ALL DREAMS
@@ -90,7 +106,7 @@ dreams.put("/:id", async (req, res) => {
     const dream = req.body;
 
     if (!isValidId(id)) return res.status(400).json({ error: `id must be a positive integer! Received ${id}` });
-    if (!isValidDream(dream)) return res.status(400).json({ error: "Invalid dream data" });
+    if (!isValidDreamUpdate(dream)) return res.status(400).json({ error: "Invalid dream update data" });
 
     const updatedDream = await updateDream(id, dream);
     if (!updatedDream) return res.status(404).json({ error: "Dream not found" });
