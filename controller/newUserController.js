@@ -51,6 +51,7 @@ function generateAccessToken(user) {
 const {
   newuser,
   getAllSingleUser,
+  updateUserPassword
 } = require("../queries/newUser");
 
 // HANDLE LOGGING IN A USER
@@ -140,6 +141,22 @@ newusers.get('/profile', (req, res) => {
   }
 });
 
+newusers.post("/reset-password-verify", async (req, res) => {
+  try {
+    const { newPassword, username } = req.body;
 
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const updatedUser = await updateUserPassword(username, hashedPassword);
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ message: "Password reset successful" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 module.exports = newusers

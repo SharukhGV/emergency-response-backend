@@ -22,10 +22,18 @@ const getAllSingleUser = async (username) => {
   return userz
 }
 
+const updateUserPassword = async (username, newHashedPassword) => {
+  const updatedUser = await db.one(
+    "UPDATE users SET hashed_password = $1 WHERE username = $2 RETURNING *",
+    [newHashedPassword, username]
+  );
+  return updatedUser;
+};
 
 
 module.exports = {
   newuser,
   getAllSingleUser,
+  updateUserPassword
 };
 
